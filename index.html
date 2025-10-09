@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventFinder - Discover Local Events</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #8b5cf6;
+            --primary-dark: #7c3aed;
+            --secondary-color: #06b6d4;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --bg-color: #fafafa;
+            --surface-color: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            --border-color: #e5e7eb;
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Vue App Structure */
+        #app {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Component */
+        .header {
+            background: var(--gradient);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo::before {
+            content: "🎪";
+            font-size: 1.5rem;
+        }
+
+        .nav {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover,
+        .nav-link.router-link-active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .location-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Main Content Area - Vue Router View */
+        .main-content {
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            width: 100%;
+        }
+
+        /* Vue Component Base Styles */
+        .page-view {
+            min-height: 400px;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Card Components for Vue */
+        .card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .card-footer {
+            padding: 1rem 1.5rem;
+            background-color: #f9fafb;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Button Components */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background-color: var(--surface-color);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        /* Form Components for Vue */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgb(139 92 246 / 0.1);
+        }
+
+        .search-bar {
+            position: relative;
+            max-width: 500px;
+            margin: 2rem auto;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 3rem 1rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 2rem;
+            font-size: 1.1rem;
+            box-shadow: var(--shadow);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 2.5rem;
+            height: 2.5rem;
+            cursor: pointer;
+        }
+
+        /* Event Card Components */
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .event-card {
+            background: var(--surface-color);
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .event-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+        }
+
+        .event-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+        }
+
+        .event-content {
+            padding: 1.5rem;
+        }
+
+        .event-date {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: #fef3c7;
+            color: #92400e;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .event-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .event-description {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .event-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .event-location,
+        .event-price {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .event-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            padding: 0.25rem 0.75rem;
+            background-color: #e0e7ff;
+            color: var(--primary-color);
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Filter Components */
+        .filters-bar {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        /* Stats/Categories Component */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .category-card {
+            background: var(--surface-color);
+            border: 2px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .category-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .category-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .category-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .category-count {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Loading & Empty States */
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem;
+        }
+
+        .spinner {
+            width: 2rem;
+            height: 2rem;
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Vue Transition Classes */
+        .fade-enter-active,
+        .fade-leave-active {
+            transition: opacity 0.3s ease;
+        }
+
+        .fade-enter-from,
+        .fade-leave-to {
+            opacity: 0;
+        }
+
+        .slide-enter-active,
+        .slide-leave-active {
+            transition: transform 0.3s ease;
+        }
+
+        .slide-enter-from {
+            transform: translateX(100%);
+        }
+
+        .slide-leave-to {
+            transform: translateX(-100%);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav {
+                order: -1;
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .events-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Utility Classes for Vue */
+        .hidden { display: none; }
+        .visible { display: block; }
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .text-right { text-align: right; }
+        .mb-1 { margin-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .mb-3 { margin-bottom: 1.5rem; }
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Header Component (HeaderComponent.vue) -->
+        <header class="header">
+            <div class="header-content">
+                <a href="#/" class="logo">EventFinder</a>
+                
+                <nav class="nav">
+                    <a href="#/" class="nav-link">Home</a>
+                    <a href="#/events" class="nav-link">Browse Events</a>
+                    <a href="#/categories" class="nav-link">Categories</a>
+                    <a href="#/favorites" class="nav-link">My Favorites</a>
+                </nav>
+
+                <div class="user-menu">
+                    <div class="location-indicator">
+                        📍 Auckland, NZ
+                    </div>
+                    <button class="btn btn-secondary btn-small">Sign In</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content (Router View) -->
+        <main class="main-content">
+            <!-- Home View Component -->
+            <div class="page-view" id="home-view">
+                <div class="page-header">
+                    <h1 class="page-title">Discover Amazing Local Events</h1>
+                    <p class="page-subtitle">Find concerts, workshops, festivals, and more happening near you</p>
+                </div>
+
+                <!-- Search Component -->
+                <div class="search-bar">
+                    <input type="text" 
+                           class="search-input" 
+                           placeholder="Search events, venues, or organizers..."
+                           v-model="searchQuery">
+                    <button class="search-btn">🔍</button>
+                </div>
+
+                <!-- Categories Component -->
+                <div class="categories-grid">
+                    <div class="category-card">
+                        <span class="category-icon">🎵</span>
+                        <div class="category-name">Music & Concerts</div>
+                        <div class="category-count">24 events</div>
+                    </div>
+                    <div class="category-card">
+                        <span class="category-icon">🎨</span>
+                        <div class="category-name">Arts & Culture</div>
+                        <div class="category-count">18 events</div>
+                    </div>
+                    <div class="category-card">
+                        <span class="category-icon">🍕</span>
+                        <div class="category-name">Food & Drink</div>
+                        <div class="category-count">31 events</div>
+                    </div>
+                    <div class="category-card">
+                        <span class="category-icon">🏃‍♂️</span>
+                        <div class="category-name">Sports & Fitness</div>
+                        <div class="category-count">15 events</div>
+                    </div>
+                    <div class="category-card">
+                        <span class="category-icon">💼</span>
+                        <div class="category-name">Business & Tech</div>
+                        <div class="category-count">12 events</div>
+                    </div>
+                    <div class="category-card">
+                        <span class="category-icon">👨‍👩‍👧‍👦</span>
+                        <div class="category-name">Family & Kids</div>
+                        <div class="category-count">22 events</div>
+                    </div>
+                </div>
+
+                <!-- Featured Events Component -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Featured Events This Weekend</h2>
+                        <a href="#/events" class="btn btn-outline">View All Events</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="events-grid">
+                            <div class="event-card">
+                                <div class="event-image">🎪</div>
+                                <div class="event-content">
+                                    <div class="event-date">📅 Sat, Sep 16</div>
+                                    <h3 class="event-title">Auckland Night Market</h3>
+                                    <p class="event-description">Experience diverse food stalls, local crafts, and live entertainment at Auckland's premier night market.</p>
+                                    <div class="event-meta">
+                                        <div class="event-location">📍 Queen Street</div>
+                                        <div class="event-price">💰 Free</div>
+                                    </div>
+                                    <div class="event-tags">
+                                        <span class="tag">Food</span>
+                                        <span class="tag">Market</span>
+                                        <span class="tag">Family</span>
+                                    </div>
+                                    <button class="btn btn-primary">View Details</button>
+                                </div>
+                            </div>
+                            
+                            <div class="event-card">
+                                <div class="event-image">🎵</div>
+                                <div class="event-content">
+                                    <div class="event-date">📅 Sun, Sep 17</div>
+                                    <h3 class="event-title">Jazz in the Park</h3>
+                                    <p class="event-description">Enjoy an afternoon of smooth jazz performances by local Auckland musicians in beautiful Albert Park.</p>
+                                    <div class="event-meta">
+                                        <div class="event-location">📍 Albert Park</div>
+                                        <div class="event-price">💰 $15</div>
+                                    </div>
+                                    <div class="event-tags">
+                                        <span class="tag">Music</span>
+                                        <span class="tag">Jazz</span>
+                                        <span class="tag">Outdoor</span>
+                                    </div>
+                                    <button class="btn btn-primary">View Details</button>
+                                </div>
+                            </div>
+
+                            <div class="event-card">
+                                <div class="event-image">🎨</div>
+                                <div class="event-content">
+                                    <div class="event-date">📅 Sat, Sep 16</div>
+                                    <h3 class="event-title">Art Gallery Opening</h3>
+                                    <p class="event-description">Opening night for "Contemporary Kiwi Artists" featuring works from emerging New Zealand artists.</p>
+                                    <div class="event-meta">
+                                        <div class="event-location">📍 K Road Gallery</div>
+                                        <div class="event-price">💰 $20</div>
+                                    </div>
+                                    <div class="event-tags">
+                                        <span class="tag">Art</span>
+                                        <span class="tag">Gallery</span>
+                                        <span class="tag">Culture</span>
+                                    </div>
+                                    <button class="btn btn-primary">View Details</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Events List View (would be separate component) -->
+            <div class="page-view hidden" id="events-view">
+                <div class="page-header">
+                    <h1 class="page-title">Browse All Events</h1>
+                    <p class="page-subtitle">Discover what's happening in Auckland</p>
+                </div>
+
+                <!-- Filters Component -->
+                <div class="filters-bar">
+                    <div class="filters-grid">
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select class="form-select">
+                                <option>All Categories</option>
+                                <option>Music & Concerts</option>
+                                <option>Arts & Culture</option>
+                                <option>Food & Drink</option>
+                                <option>Sports & Fitness</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Date Range</label>
+                            <select class="form-select">
+                                <option>All Dates</option>
+                                <option>This Weekend</option>
+                                <option>Next Week</option>
+                                <option>This Month</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Price Range</label>
+                            <select class="form-select">
+                                <option>All Prices</option>
+                                <option>Free</option>
+                                <option>Under $25</option>
+                                <option>$25 - $50</option>
+                                <option>$50+</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Location</label>
+                            <input type="text" class="form-input" placeholder="Enter suburb or venue">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Events List Component -->
+                <div class="events-grid">
+                    <!-- Event cards would be rendered here with v-for -->
+                    <div class="loading-spinner">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Detail Modal/View (would be separate component) -->
+            <div class="page-view hidden" id="event-detail">
+                <div class="card">
+                    <div class="event-image" style="height: 300px;">🎪</div>
+                    <div class="card-body">
+                        <div class="event-date mb-2">📅 Saturday, September 16, 2025</div>
+                        <h1 class="event-title">Auckland Night Market</h1>
+                        <div class="event-meta mb-3">
+                            <div class="event-location">📍 Queen Street, Auckland CBD</div>
+                            <div class="event-price">💰 Free Entry</div>
+                        </div>
+                        <div class="event-tags mb-3">
+                            <span class="tag">Food</span>
+                            <span class="tag">Market</span>
+                            <span class="tag">Family Friendly</span>
+                            <span class="tag">Outdoor</span>
+                        </div>
+                        <p class="event-description mb-3">
+                            Join us for Auckland's premier night market featuring over 50 food stalls, local artisan vendors, 
+                            and live entertainment. Experience flavors from around the world while enjoying the vibrant 
+                            atmosphere of Queen Street after dark.
+                        </p>
+                        <div style="display: flex; gap: 1rem;">
+                            <button class="btn btn-primary">Add to Favorites ❤️</button>
+                            <button class="btn btn-secondary">Share Event 📤</button>
+                            <button class="btn btn-outline">Get Directions 🗺️</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+<script>
+// Fetch and display events when page loads
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    // Fetch events from your API
+    const response = await fetch('/api/events');
+    const events = await response.json();
+    
+    console.log('Fetched events:', events); // Debug log
+    
+    // Find the events grid container
+    const eventsGrid = document.querySelector('.events-grid');
+    
+    // Clear placeholder events
+    eventsGrid.innerHTML = '';
+    
+    // Check if we have events
+    if (events.length === 0) {
+      eventsGrid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><p>No events found</p></div>';
+      return;
+    }
+    
+    // Display each event
+    events.forEach(event => {
+      const eventCard = createEventCard(event);
+      eventsGrid.appendChild(eventCard);
+    });
+    
+  } catch (error) {
+    console.error('Error fetching events:', error);
+  }
+});
+
+// Function to create an event card
+function createEventCard(event) {
+  const card = document.createElement('div');
+  card.className = 'event-card';
+  
+  // Format date if it exists
+  let dateDisplay = 'Date TBA';
+  if (event.dateTime && event.dateTime.start) {
+    const date = new Date(event.dateTime.start);
+    dateDisplay = date.toLocaleDateString('en-NZ', { 
+      weekday: 'short', 
+      month: 'short', 
+      day: 'numeric' 
+    });
+  }
+  
+  // Get category emoji
+  const categoryEmojis = {
+    'Music & Concerts': '🎵',
+    'Arts & Culture': '🎨',
+    'Food & Drink': '🍕',
+    'Sports & Fitness': '🏃‍♂️',
+    'Business & Tech': '💼',
+    'Family & Kids': '👨‍👩‍👧‍👦'
+  };
+  
+  const emoji = categoryEmojis[event.category] || '🎪';
+  
+  // Get price display
+  let priceDisplay = 'Price TBA';
+  if (event.pricing) {
+    if (event.pricing.isFree) {
+      priceDisplay = 'Free';
+    } else if (event.pricing.minPrice) {
+      priceDisplay = `$${event.pricing.minPrice}`;
+    }
+  }
+  
+  // Get location display
+  let locationDisplay = 'Location TBA';
+  if (event.location && event.location.venueName) {
+    locationDisplay = event.location.venueName;
+  } else if (event.location && event.location.address && event.location.address.suburb) {
+    locationDisplay = event.location.address.suburb;
+  }
+  
+  card.innerHTML = `
+    <div class="event-image">${emoji}</div>
+    <div class="event-content">
+      <div class="event-date">📅 ${dateDisplay}</div>
+      <h3 class="event-title">${event.title}</h3>
+      <p class="event-description">${event.description || 'No description available'}</p>
+      <div class="event-meta">
+        <div class="event-location">📍 ${locationDisplay}</div>
+        <div class="event-price">💰 ${priceDisplay}</div>
+      </div>
+      <div class="event-tags">
+        <span class="tag">${event.category}</span>
+      </div>
+      <button class="btn btn-primary" onclick="viewEvent('${event._id}')">View Details</button>
+    </div>
+  `;
+  
+  return card;
+}
+
+// Function to view event details (placeholder for now)
+function viewEvent(eventId) {
+  console.log('View event:', eventId);
+  alert('Event details coming soon! Event ID: ' + eventId);
+  // Later you can navigate to a detail page or show a modal
+}
+</script>
+    
+</body>
+</html>

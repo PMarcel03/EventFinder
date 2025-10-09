@@ -1,0 +1,29 @@
+Dependencies
+
+/node_modules
+/dist
+/build
+Environmental Variables (CRITICAL: NEVER COMMIT SECRETS)
+This prevents your database URI and other API keys from being uploaded!
+
+.env
+.env.local
+.env.*.local
+*.env
+Logs and Debugging
+
+npm-debug.log*
+yarn-debug.log*
+*.log
+.DS_Store
+Thumbs.db
+Optional: IDE/Editor files (e.g., VS Code config)
+
+.vscode/
+Build artifacts for Vue/other frontend tools (if they generate a 'dist' folder)
+
+.nuxt/ # For Nuxt/Vue
+.output/ # For common build output
+Crash files
+
+*.stackdump
