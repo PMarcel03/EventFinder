@@ -1,2 +1,2 @@
 # EventFinder
-New Zealand based Eventfinder app built in a MERN stack
+New Zealand based Eventfinder app built in a MEVN stack
