@@ -27,3 +27,6 @@ Build artifacts for Vue/other frontend tools (if they generate a 'dist' folder)
 Crash files
 
 *.stackdump
+package.json
+.gitignore
+.gitignore
