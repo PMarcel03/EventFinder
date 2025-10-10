@@ -1,0 +1,1 @@
+//User.js Mongoose Model Stores user information

@@ -27,11 +27,23 @@ mongoose.connect(process.env.MONGODB_URI)
   })
   .catch(err => console.error('MongoDB connection error:', err));
 
-//Routes
+//---Routes---//
+//Event Route
 const eventRoutes = require('./routes/events');
 console.log('Event routes loaded:', eventRoutes);
 app.use('/api/events', eventRoutes);
 console.log('Event routes registered at /api/events');
+//Venue Route
+const venueRoutes = require('./routes/venues');
+console.log('Venue routes loaded:', venueRoutes);
+app.use('/api/venues', venueRoutes);
+console.log('Venue routes registered at /api/venues');
+//Organizer Route
+const organizerRoutes = require('./routes/organizers');
+console.log('Organizer routes loaded:', organizerRoutes);
+app.use('/api/organizers', organizerRoutes);
+console.log('Organizer routes registered at /api/organizers');
+
 
 //Test Route
 app.get('/api/test', (req, res) => {
