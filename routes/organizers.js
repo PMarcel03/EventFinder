@@ -3,7 +3,7 @@ const router = express.Router();
 const Organizer = require ('../models/Organizer')
 
 //POST /api/organizers/normalize - The NORMALIZATION ROUTE
-router.post('./normalize', async (req, res) => {
+router.post('/normalize', async (req, res) => {
     const {name} = req.body;
 
     if (!name) {
@@ -14,7 +14,7 @@ router.post('./normalize', async (req, res) => {
         //Use findOneandUpdate with upsert
         const organizer = await Organizer.findOneAndUpdate(
             {name: name}, //Query: Find by unique name
-            {name: name}, //Data to set
+            {$setOnInsert: {name: name}}, //Data to set
             {
                 new: true,
                 upsert: true,

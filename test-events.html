@@ -2,58 +2,67 @@
 <html>
 <head>
   <title>Test Events</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-  <h1>Upcoming Events</h1>
+  <h1>Upcoming Events for Scraper Test</h1>
   
+  <!-- Event 1: First instance of Venue A and Organizer A -->
   <div class="event">
     <h2 class="title">Summer Music Festival</h2>
-    <p class="description">Three day outdoor music festival featuring local and international artists</p>
+    <p class="description">Three day outdoor music festival featuring local and international artists.</p>
     <span class="category">Music & Concerts</span>
-    <span class="date">2025-12-15</span>
-    <!-- NEW DATA FOR SCRAPER NORMALIZATION -->
+    <span class="date">2025-12-15T18:00:00Z</span>
+    <!-- New required fields for normalization -->
     <span class="venue-name">Western Springs Stadium</span>
-    <span class="organizer-name">Live Nation NZ</span>
+    <span class="organizer-name">Auckland Live Events</span>
   </div>
   
+  <!-- Event 2: First instance of Venue B, Organizer B -->
   <div class="event">
     <h2 class="title">Auckland Art Exhibition</h2>
-    <p class="description">Contemporary art showcase featuring emerging New Zealand artists</p>
+    <p class="description">Contemporary art showcase featuring emerging New Zealand artists.</p>
     <span class="category">Arts & Culture</span>
-    <span class="date">2025-11-20</span>
-    <!-- NEW DATA FOR SCRAPER NORMALIZATION -->
-    <span class="venue-name">Auckland Art Gallery Toi o Tāmaki</span>
-    <span class="organizer-name">Auckland Arts Foundation</span>
+    <span class="date">2025-11-20T10:00:00Z</span>
+    <!-- New required fields for normalization -->
+    <span class="venue-name">Aotea Centre</span>
+    <span class="organizer-name">NZ Art Council</span>
   </div>
   
+  <!-- Event 3: Unique Event, Unique Venue, Unique Organizer -->
   <div class="event">
     <h2 class="title">Street Food Market</h2>
-    <p class="description">Weekly food market with cuisines from around the world</p>
+    <p class="description">Weekly food market with cuisines from around the world.</p>
     <span class="category">Food & Drink</span>
-    <span class="date">2025-11-10</span>
-    <!-- NEW DATA FOR SCRAPER NORMALIZATION -->
-    <span class="venue-name">Silo Park</span>
-    <span class="organizer-name">Auckland Market Collective</span>
+    <span class="date">2025-11-10T16:00:00Z</span>
+    <!-- New required fields for normalization -->
+    <span class="venue-name">Britomart Square</span>
+    <span class="organizer-name">Eat Street Collective</span>
   </div>
   
+  <!-- Event 4: Event title is same as Event 1, but date/venue is different (Should be created) -->
   <div class="event">
-    <h2 class="title">Tech Startup Meetup</h2>
-    <p class="description">Monthly networking event for entrepreneurs and developers</p>
-    <span class="category">Business & Tech</span>
-    <span class="date">2025-11-25</span>
-    <!-- NEW DATA FOR SCRAPER NORMALIZATION -->
-    <span class="venue-name">GridAKL / John H. Normal Building</span>
-    <span class="organizer-name">Tech Innovators NZ</span>
+    <h2 class="title">Summer Music Festival</h2>
+    <p class="description">A smaller indoor version of the summer festival.</p>
+    <span class="category">Music & Concerts</span>
+    <span class="date">2025-12-16T19:00:00Z</span> 
+    <!-- New required fields for normalization -->
+    <span class="venue-name">Britomart Square</span>
+    <span class="organizer-name">Auckland Live Events</span>
   </div>
-  
+
+  <!-- Event 5: Uses Venue B ("Aotea Centre") and Organizer A ("Auckland Live Events") again 
+       This will test that the normalized IDs are reused correctly. -->
   <div class="event">
     <h2 class="title">Kids Fun Day</h2>
-    <p class="description">Family-friendly activities, games, and entertainment for children of all ages.</p>
+    <p class="description">Family-friendly activities, games, and entertainment for kids.</p>
     <span class="category">Family & Kids</span>
-    <span class="date">2025-11-05</span>
-    <!-- NEW DATA FOR SCRAPER NORMALIZATION -->
-    <span class="venue-name">Aotea Square</span>
-    <span class="organizer-name">Auckland City Events</span>
+    <span class="date">2025-11-05T14:00:00Z</span>
+    <!-- Reused fields for normalization test -->
+    <span class="venue-name">Aotea Centre</span>
+    <span class="organizer-name">Auckland Live Events</span>
   </div>
+  
 </body>
 </html>

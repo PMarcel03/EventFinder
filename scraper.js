@@ -1,10 +1,25 @@
 //Scraper.JS
 const axios = require('axios');
 const cheerio = require('cheerio');
+const { Console } = require('console');
 const fs = require ('fs/promises') //Uses promises version of fs for async/wait
 
 //API Base URL
 const API_URL = 'http://localhost:3000/api'
+
+//Helper function to convert a title into a DB friendly, unique slug
+//This is critical for the atomic upsert operation in events.js
+function slugify(text)
+{
+    return text
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-') //Replaces spaces with -
+        .replace(/[^\w\-]+/g, '') //Removes all non-word chars
+        .replace(/\-\-+/g, '-') //Replace multiple - with a single -
+        .slice(0, 100); //Shorten to a reasonable length
+}
 
 async function fetchContent(url)
 //Check if protocol is 'file://'
@@ -29,7 +44,7 @@ async function fetchContent(url)
                 try {
                     console.log('Fetching event from:', url);
                     const response = await axios.get(url, {
-                        headers: {'User-Agent': 'Eventfinder-Scraper/1.0'} //Good pratice to identify the scraper
+                        headers: {'User-Agent': 'Eventfinder-Scraper/1.0'}
                     });
                     return response.data;
                 } catch(error){
@@ -42,6 +57,7 @@ async function fetchContent(url)
 
 //Function to scrape events from HTML Content
 function parseEvents(html) {
+    try {
     const $ = cheerio.load(html);
     const events = [];
 
@@ -51,25 +67,76 @@ function parseEvents(html) {
         const category = $(element).find('.category').text().trim();
         const dateString = $(element).find('.date').text().trim();
 
-        //Convert date string to an ISO date for Mongoose's date type
-        const dateTime = dateString ? {start: new Date(dateString).toISOString()} : {};
+        //Venue + Organizer Scrape
+        const venueName = $(element).find('.venue-name').text().trim();
+        const organizerName = $(element).find('.organizer-name').text().trim();
+
+        //Convert date string to an ISO date for Mongoose's date type with validation
+        let dateTime = {};
+        if (dateString) {
+            const dateObj = new Date(dateString);
+            //Simple validation check: Ensure date object is valid
+        if(!isNaN(dateObj))
+            {
+                dateTime = {start: dateObj.toISOString()}
+            } else {
+                console.warn(`Skipping event due to invalid date string: ${title}`)
+                return;
+            }
+        }
+        
 
         const event = {
             title: title,
             description: description,
             category: category,
-            dateTime: dateTime
-            //Currently missing venues/organizers but that will be added later
+            dateTime: dateTime,
+            //These are temporary fields used only for the normalization API call
+            venueName: venueName,
+            organizerName: organizerName,
+            //CRITICAL: Slug generation is now inside parser
+            slug: slugify(title)
         };
 
         //Only add if required fields are present
-        if (event.title && event.category) {
+        if (event.title && event.category && event.venueName && event.organizerName && dateString) {
             events.push(event);
         }
     });
 
     console.log(`Found ${events.length} events`);
     return events;
+    } catch(error) {
+        console.error('Error scraping events', error.message);
+        return [];
+    }
+    
+}
+
+//Hits the API's normalization endpoint for a Venue
+async function normalizeVenue(name){
+    if (!name) return null;
+    try {
+        const response = await axios.post(`${API_URL}/venues/normalize`, {name});
+        return response.data._id;
+    }catch(error){
+        const apiError = error.response ? error.response.data.error: error.message;
+        console.error(`Error in normalizing venue "${name}": ${apiError}`);
+        return null;
+    }
+}
+
+//Hits the API's normalization endpoint for an Organizer
+async function normalizeOrganizer(name){
+    if (!name) return null;
+    try {
+        const response = await axios.post(`${API_URL}/organizers/normalize`, {name});
+        return response.data._id;
+    }catch(error){
+        const apiError = error.response ? error.response.data.error: error.message;
+        console.error(`Error in normalizing organizer "${name}": ${apiError}`);
+        return null;
+    }
 }
 
 //Function to scrape events from a URL
@@ -84,7 +151,20 @@ async function scrapeEvents(url) {
 //Function to save an event to the API
 async function saveEvent(event) {
     try{
-        const payload = {...event};
+        const payload = {
+            title: event.title,
+            description: event.description,
+            category: event.category,
+            dateTime: event.dateTime,
+            slug: event.slug,
+            //Use the Normalized IDs for linking (Referencing)
+            location: {
+                venueId: event.venueId, //Mongoose objectId reference
+                venueName: event.venueName, //Denormalized name for quick display/UI
+            },
+            organizer: event.organizerId, //The Mongoose ObjectId reference
+            //Pricing, address etc., would be added here if scraped
+        };
 
         const response = await axios.post(`${API_URL}/events`, payload);
         console.log(`Saved: ${event.title} (ID: ${response.data._id})`);
@@ -103,7 +183,7 @@ async function runScraper() {
 
     //URL to scrape (Can be local for testing)
     const path = require ('path');
-    const targetUrl = 'file://' + path.resolve(__dirname, 'test-events.html');
+    const targetUrl = "//'file://' + path.resolve(__dirname, 'test-events.html')";
     //Or use a real website like const targetURL = 'https://example.com/events'
 
     //Scrape events
@@ -113,16 +193,33 @@ async function runScraper() {
         return;
     }
 
+    //Normalize and map IDs
+    console.log(`\nStarting normalization for ${events.length} potential events...`);
+
+    for (const event of events){
+        //Await the normalization calls sequentially
+        event.venueId = await normalizeVenue(event.venueName);
+        event.organizerId = await normalizeOrganizer(event.organizerName)
+    }
+    console.log('Normalization complete. Starting save phase...')
+
     //Save each event to the API
     console.log(`\nSaving ${events.length} events to database...\n`)
 
     for (const event of events){
-        await saveEvent(event);
-        //add a small delay to avoid overwhelming the API
+        //CRITICAL CHECK: Only proceed if normalization has been completed
+        if (event.venueId && event.organizerId) {
+            await saveEvent(event);
+        } else {
+            console.warn(`Skipping event "${event.title}": Normalization failed for Venue/Organizer.`)
+        }
+        //Add a small delay to respect API rate limits and log visibility
         await new Promise(resolve => setTimeout(resolve, 500));
+        
     }
 
     console.log('\n=== Scraper Completed ===')
 }
 
+//Execute main scraper
 runScraper()

@@ -45,38 +45,36 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-//POST new event
+//POST new event - Implementing a single, atomic UPSERT based on the unique 'slug'
 router.post('/', async (req, res) => {
-  try {
-    //1. Check for event deduplication (Unique Index Search)
-    //To prevent duplicate events, we check for a combination of title, venue and start time
-    const existingEvent = await Event.findOne({
-        title: req.body.title,
-        'location.venueId': req.body.location.venueId,
-        'dateTime.start': req.body.dateTime.start
-    });
+    try {
+        const {slug} = req.body;
 
-    if (existingEvent) {
-        //If the exact same event already exists, update it instead of creating a new one (UPSERT)
-        const updatedEvent = await Event.findByIdAndUpdate(
-            existingEvent._id,
-            req.body,
-            {new: true, runValidators: true}
+        if (!slug) 
+        {
+            return res.status(400).json({error: 'Event slug is required for upsert operation'});
+        }
+
+        const event = await Event.findOneAndUpdate(
+            {slug: slug}, //1. Query: Use the unique slug to find the document
+            req.body, //2. Update: Use the entire req body to update all fields
+            {
+                new: true, //Return the updated/new document
+                upsert: true, //CRITICAL: Create the document if it doesn't exist
+                runValidators: true //Ensures mongoose validation runs on update/insert
+            }
         );
-        console.log('Event Updated (deduplication):', updatedEvent.title);
-        return res.status(200).json(updatedEvent);
+
+        const isNew = event.createdAt.getTime() === event.updatedAt.getTime();
+        const statusCode = isNew ? 201 : 200;
+
+        console.log(`Event ${event.title} saved (Slug based ${isNew ? 'Creation' : 'Update'})`)
+        res.status(statusCode).json(event);
+    } catch(err) {
+        console.error('Event Upsert Error:', err.message);
+        res.status(400).json({error: err.message});
     }
 
-    //2.If its a new event, create and save it
-    const event = new Event(req.body);
-    await event.save();
-    console.log('New event created:', event.title);
-    return res.status(200).json(event)
-  }catch(err){
-    console.error('Error processing event POST:', err.message);
-    res.status(400).json({error: err.message});
-  }
-    
 });
 
 //PUT new event

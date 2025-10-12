@@ -15,7 +15,7 @@ router.post('/normalize', async (req, res) => {
         //findOneandUpdate is the standard pattern for upsert operations
         const venue = await Venue.findOneAndUpdate(
             {name: name}, //1. Query: Find a venue with this unique name
-            {name: name}, //2. Update/Insert: Data to a set if found or created
+            {$setOnInsert: {name: name}}, //2. Update/Insert: Data to a set if found or created
             {
                 new: true, //Return the updated/new document
                 upsert: true, //CRITICAL: If no document is found create a new one 
