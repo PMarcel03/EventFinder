@@ -593,32 +593,32 @@
 
                 <!-- Categories Component -->
                 <div class="categories-grid">
-                    <div class="category-card">
+                    <div class="category-card" @click="filterByCategory('Music & Concerts')">
                         <span class="category-icon">🎵</span>
                         <div class="category-name">Music & Concerts</div>
                         <div class="category-count">24 events</div>
                     </div>
-                    <div class="category-card">
+                    <div class="category-card" @click="filterByCategory('Arts & Culture')">
                         <span class="category-icon">🎨</span>
                         <div class="category-name">Arts & Culture</div>
                         <div class="category-count">18 events</div>
                     </div>
-                    <div class="category-card">
+                    <div class="category-card" @click="filterByCategory('Food & Drink')">
                         <span class="category-icon">🍕</span>
                         <div class="category-name">Food & Drink</div>
                         <div class="category-count">31 events</div>
                     </div>
-                    <div class="category-card">
+                    <div class="category-card" @click="filterByCategory('Sports & Fitness')">
                         <span class="category-icon">🏃‍♂️</span>
                         <div class="category-name">Sports & Fitness</div>
                         <div class="category-count">15 events</div>
                     </div>
-                    <div class="category-card">
+                    <div class="category-card" @click="filterByCategory('Business & Tech')">
                         <span class="category-icon">💼</span>
                         <div class="category-name">Business & Tech</div>
                         <div class="category-count">12 events</div>
                     </div>
-                    <div class="category-card">
+                    <div class="category-card" @click="filterByCategory('Family & Kids')">
                         <span class="category-icon">👨‍👩‍👧‍👦</span>
                         <div class="category-name">Family & Kids</div>
                         <div class="category-count">22 events</div>
@@ -643,7 +643,7 @@
                     </div>
 
                     <!--Event Cards-->
-                    <div v-else v-for="event in events" :key="event._id" class="event-card">
+                    <div v-else v-for="event in filteredEvents" :key="event._id" class="event-card">
                         <div class="event-image">{{getCategoryEmoji(event.category)}}</div>
                         <div class="event-content">
                             <div class="event-date">📅 {{formatDate(event.dateTime)}}</div>
@@ -682,6 +682,8 @@
                                 <option>Arts & Culture</option>
                                 <option>Food & Drink</option>
                                 <option>Sports & Fitness</option>
+                                <option>Business & Tech</option>
+                                <option>Family & Kids</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -762,7 +764,8 @@ createApp({
             loading: true,
             error: null,
             searchQuery: '',
-            currentRoute: window.location.hash.slice(1) || '/' //Gets the hash part, defaults to '/'
+            currentRoute: window.location.hash.slice(1) || '/', //Gets the hash part, defaults to '/'
+            selectedCategory: null
         }
     },
 
@@ -778,6 +781,7 @@ createApp({
         const response = await fetch('/api/events');
         //Assuming the API returns a standard array of events
         this.events = await response.json();
+        
         //Simulate adding a unique ID since fetch/json doesnt
         this.events = this.events.map((e, index) => ({...e, _id: e._d || index}))
        } catch(err){
@@ -797,6 +801,16 @@ createApp({
 
             //Fallback: Could be a dedicated 404 view
             return 'home-view';
+        },
+
+        filteredEvents()
+        {
+            //If no category selected show all
+            if (!this.selectedCategory){
+                return this.events;
+            }
+            //Filter by selected category
+            return this.events.filter(event => event.category === this.selectedCategory);
         }
     },
 
@@ -861,10 +875,23 @@ createApp({
             if (location.venueName) return location.venueName;
             if (location.address?.suburb) return location.address.suburb;
             return 'Location TBA';
+        },
+
+        filterByCategory(category){
+        //If clicking the same category, clear the filter
+        if (this.selectedCategory === category)
+        {
+            this.selectedCategory = null;
+        } else {
+        //Otherwise, set the new category
+            this.selectedCategory = category
+        }
+        },
+        clearFilter() {
+            this.selectedCategory = null;
         }
     }  // methods object closes here
 }).mount('#app');
-</script>
-    
+</script>   
 </body>
 </html>
