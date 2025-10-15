@@ -559,8 +559,8 @@
                 
                 <nav class="nav">
                     <a href="#/" class="nav-link">Home</a>
-                    <a href="#/events" class="nav-link">Browse Events</a>
-                    <a href="#/categories" class="nav-link">Categories</a>
+                    <!--<a href="#/events" class="nav-link">Browse Events</a>-->
+                    <!--<a href="#/categories" class="nav-link">Categories</a>-->
                     <a href="#/favorites" class="nav-link">My Favorites</a>
                 </nav>
 
@@ -581,15 +581,31 @@
                     <h1 class="page-title">Discover Amazing Local Events</h1>
                     <p class="page-subtitle">Find concerts, workshops, festivals, and more happening near you</p>
                 </div>
+                <!-- Selected Category Banner -->
+                <div v-if="selectedCategory || searchQuery" class="mb-2" style="text-align: center; margin-bottom: 1rem;">
+                    <span v-if="selectedCategory" class="tag" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                    📂 Filtered by: {{ selectedCategory }}
+                    </span>
+                    <span v-else-if="searchQuery" class="tag" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                    🔍 Search results for: "{{ searchQuery }}"
+                    </span>
+                </div>
+                <div v-else class="mb-2" style="text-align: center; margin-bottom: 1rem;">
+                    <span class="tag" style="font-size: 1rem; padding: 0.5rem 1rem; background-color: #d8c7fe; color: #240e92;">
+                        📅 Showing events this week ({{ getThisWeekDates().startDate.split('T')[0] }} - {{ getThisWeekDates().endDate.split('T')[0] }})
+                    </span>
+                </div>
 
                 <!-- Search Component -->
                 <div class="search-bar">
                     <input type="text" 
                            class="search-input" 
                            placeholder="Search events, venues, or organizers..."
+                           @input = "debounceSearch"
                            v-model="searchQuery">
                     <button class="search-btn">🔍</button>
                 </div>
+
 
                 <!-- Categories Component -->
                 <div class="categories-grid">
@@ -764,8 +780,10 @@ createApp({
             loading: true,
             error: null,
             searchQuery: '',
+            debounceTimer: null,
             currentRoute: window.location.hash.slice(1) || '/', //Gets the hash part, defaults to '/'
-            selectedCategory: null
+            selectedCategory: null,
+            defaultDateFilter: true, //Flag to know if we should apply the weekend filter
         }
     },
 
@@ -783,7 +801,7 @@ createApp({
         this.events = await response.json();
         
         //Simulate adding a unique ID since fetch/json doesnt
-        this.events = this.events.map((e, index) => ({...e, _id: e._d || index}))
+        //this.events = this.events.map((e, index) => ({...e, _id: e._d || index}))
        } catch(err){
         this.error = 'Could not connect to the API. Check the server is running.';
        } finally {
@@ -794,9 +812,9 @@ createApp({
     computed: {
         currentview(){
             //Maps hash path to an element ID/Name to be displayed
-            if (this.currentRoute === '' || this.currentRoute === '/') return 'home-view';
-            if (this.currentRoute.startsWith('/events')) return 'events-view';
-            if (this.currentRoute.startsWith('/categories')) return 'categories-view';
+            if (this.currentRoute === '' || this.currentRoute === '/' || this.currentRoute.startsWith('/events')) return 'home-view';
+            //if (this.currentRoute.startsWith('/events')) return 'events-view';
+            //if (this.currentRoute.startsWith('/categories')) return 'categories-view';
             if (this.currentview.startsWith('/favourites')) return 'favourites-view';
 
             //Fallback: Could be a dedicated 404 view
@@ -805,12 +823,46 @@ createApp({
 
         filteredEvents()
         {
-            //If no category selected show all
-            if (!this.selectedCategory){
-                return this.events;
+          let events = this.events;
+          console.log('Starting with events:', events.length)
+
+          if (this.selectedCategory){
+            return events.filter(event => event.category === this.selectedCategory);
+          }
+          //If searching, filter by search query
+          else if (this.searchQuery && this.searchQuery.trim() !== '')
+          {
+            const search = this.searchQuery.toLowerCase();
+            return events.filter(event =>
+                event.title.toLowerCase().includes(search) ||
+                (event.description && event.description.toLowerCase().includes(search) ||
+                event.location?.venueName && event.location.venueName.toLowerCase().includes(search))
+            );
+          }
+          //Otherwise, show only "this week" events
+          else {
+            const dates = this.getThisWeekDates();
+            const today = new Date(dates.startDate);
+            const endOfWeek = new Date(dates.endDate);
+            
+            console.log('This week filter:');
+            console.log('Today:', today);
+            console.log('End of week:', endOfWeek);
+            
+            const filtered = events.filter(event => {
+                if(!event.dateTime || !event.dateTime.start) {
+                    console.log('Event has no date:', event.title);
+                    return false;
+                }
+                const eventDate = new Date(event.dateTime.start);
+                console.log(`Event: ${event.title}, Date: ${eventDate}, In range: ${eventDate >= today && eventDate <= endOfWeek}`);
+                return eventDate >= today && eventDate <= endOfWeek;
+            });
+            
+            console.log('Filtered events count:', filtered.length);
+            return filtered;
             }
-            //Filter by selected category
-            return this.events.filter(event => event.category === this.selectedCategory);
+
         }
     },
 
@@ -819,6 +871,87 @@ createApp({
             console.log('View event:', eventId);
             alert('Event details coming soon! Event ID: ' + eventId);
         },
+
+        getThisWeekDates()
+        {
+            const today = new Date();
+            //Set time to the start of the current day
+            today.setHours(0, 0, 0, 0);
+
+            //Calculate the date for the end of the 7th day from now (E.g if today is Tuesday the end date is the following monday at 23:59:59)
+            const sevenDaysFromNow = new Date(today);
+            sevenDaysFromNow.setDate(today.getDate() + 7);
+            sevenDaysFromNow.setHours(23, 59, 59, 999)
+
+            return{
+                //Start date is NOW (Or start of today)
+                startDate: today.toISOString(),
+                endDate: sevenDaysFromNow.toISOString()
+            };
+        },
+
+        async fetchEvents(){
+            this.loading = true;
+            this.error = null;
+
+            //Build the query string using URLSearchParams
+            const params = new URLSearchParams();
+
+            //Determine if the "This week" filter should be applied
+            const applyDefaultFilter = !this.searchQuery && !this.selectedCategory;
+
+            if(this.searchQuery){
+                params.append('search', this.searchQuery);
+            }
+            if (this.selectedCategory){
+                params.append('category', this.selectedCategory);
+            }
+
+            //Apply "This week" filter only if no search/category filter is active
+            if (applyDefaultFilter){
+                const dates = this.getThisWeekDates();
+                params.append('startDate', dates.startDate);
+                params.append('endDate', dates.endDate);
+                console.log('Applying "This Week" filter:', dates)
+            }
+
+           const url = `/api/events?${params.toString()}`;
+
+            //Only add 'search' parameter if searchQuery is not empty
+            if (this.searchQuery){
+                params.append('search', this.searchQuery)
+            }
+            //Only add 'category parameter if selectedCategory is not null
+            if(this.selectedCategory){
+                params.append('category', this.selectedCategory)
+            }
+            
+            try{
+                const response = await fetch(url)
+                if (!response.ok){
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                this.events = await response.json();
+
+                //Simulate adding a unique ID (Kept from original mouted hook)
+                //this.events = this.events.map((e, index) => ({...e, _id: e._d || index}))
+            } catch(err){
+                this.error = 'Failed to fetch events:' + err.message;
+            } finally {
+                this.loading = false;
+            }
+
+            
+        },
+
+         //2. NEW: Debounce function for search input optimization
+        debounceSearch() {
+            clearTimeout(this.debounceTimer);
+            this.debounceTimer = setTimeout(() =>{
+                this.fetchEvents();
+            }, 300); //Wait 300ms after the user stops typing before fetching
+        },
+
 
         getCategoryEmoji(category) {
             const emojis = {
@@ -879,16 +1012,24 @@ createApp({
 
         filterByCategory(category){
         //If clicking the same category, clear the filter
+        console.log('Filtering by:', category);
+        console.log('Current selected category:', this.selectedCategory);
         if (this.selectedCategory === category)
         {
             this.selectedCategory = null;
+            console.log('Cleared filter, total events:', this.events.length);
         } else {
         //Otherwise, set the new category
             this.selectedCategory = category
+            console.log('Set Filter to:', category);
         }
         },
+
+
+
         clearFilter() {
             this.selectedCategory = null;
+            this.fetchEvents();
         }
     }  // methods object closes here
 }).mount('#app');
