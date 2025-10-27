@@ -18,6 +18,7 @@ return today;
 //GET all events
 router.get('/', async (req, res) => {
     console.log('GET /api/events hit!');
+    console.log('Query params:', req.query);
     try {
         // 1. Initalize the query object and boundary
         const query = {};
@@ -45,16 +46,14 @@ router.get('/', async (req, res) => {
                 //Filter for events starting on or after the requested end date
                 query['dateTime.start'].$lte = new Date(endDate)
             } 
-            
-            // NOTE: The 'else' block for "ALL EVENTS" should not be inside this 'if' block.
-            // When startDate/endDate are present, the date range filter is active.
-
-        // } else {
-        //     // FIX FOR ALL EVENTS VIEW: (This runs when no startDate or endDate is provided)
-        //     query['dateTime.start'] = {
-        //         $ne: null,
-        //         $exists: true
-        //     };
+            //NOTE: The 'else' block for "ALL EVENTS" should not be inside this 'if' block.
+            //When startDate/endDate are present, the date range filter is active.
+        } else {
+            // FIX FOR ALL EVENTS VIEW: (This runs when no startDate or endDate is provided)
+            query['dateTime.start'] = {
+                $ne: null,
+                $exists: true
+            };
         }
 
         // 3. Handle search term (from ?search=...)

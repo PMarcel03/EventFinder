@@ -536,6 +536,78 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: var(--surface-color);
+            border-radius: 1rem;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 2.5rem;
+            height: 2.5rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.2s ease;
+            color: var(--text-primary);
+        }
+
+        .modal-close:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        /* Prevent body scroll when modal is open */
+        body.modal-open {
+            overflow: hidden;
+        }
+
         /* Utility Classes for Vue */
         .hidden { display: none; }
         .visible { display: block; }
@@ -559,9 +631,8 @@
                 
                 <nav class="nav">
                     <a href="#/" class="nav-link">Home</a>
-                    <!--<a href="#/events" class="nav-link">Browse Events</a>-->
-                    <!--<a href="#/categories" class="nav-link">Categories</a>-->
                     <a href="#/favorites" class="nav-link">My Favorites</a>
+                    <a href="#/create" class="nav-link" style="background-color: rgba(255, 255, 255, 0.2); font-weight: 600;">+ Create Event</a>
                 </nav>
 
                 <div class="user-menu">
@@ -572,7 +643,7 @@
                 </div>
             </div>
         </header>
-
+  
         <!-- Main Content (Router View) -->
         <main class="main-content">
             <!-- Home View Component -->
@@ -581,27 +652,50 @@
                     <h1 class="page-title">Discover Amazing Local Events</h1>
                     <p class="page-subtitle">Find concerts, workshops, festivals, and more happening near you</p>
                 </div>
-                <!-- Selected Category Banner -->
-                <div v-if="selectedCategory || searchQuery" class="mb-2" style="text-align: center; margin-bottom: 1rem;">
+                 <!-- Selected Category Banner -->
+                  <div v-if="displayMode.isFiltered" class="mb-2" style="text-align: center; margin-bottom: 1rem;">
                     <span v-if="selectedCategory" class="tag" style="font-size: 1rem; padding: 0.5rem 1rem;">
-                    📂 Filtered by: {{ selectedCategory }}
+                        📂 Filtered by: {{ selectedCategory }}
                     </span>
                     <span v-else-if="searchQuery" class="tag" style="font-size: 1rem; padding: 0.5rem 1rem;">
-                    🔍 Search results for: "{{ searchQuery }}"
+                        🔍 Search results for: "{{ searchQuery }}"
                     </span>
-                </div>
-                <div v-else class="mb-2" style="text-align: center; margin-bottom: 1rem;">
-                    <span class="tag" style="font-size: 1rem; padding: 0.5rem 1rem; background-color: #d8c7fe; color: #240e92;">
-                        📅 Showing events this week ({{ getThisWeekDates().startDate.split('T')[0] }} - {{ getThisWeekDates().endDate.split('T')[0] }})
+                    <span v-else-if="displayMode.current === 'filtered'" class="tag" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                        ⚙️ Advanced Filters Active
                     </span>
+                    
+                    <button @click="clearAllFilters" class="btn btn-small btn-outline" style="margin-left: 1rem;">
+                        {{ displayMode.default === 'upcoming' ? 'Show Upcoming ✕' : 'Show This Week ✕' }}
+                    </button>
                 </div>
+              
+            <div v-else-if="showAllEvents" class="mb-2" style="text-align: center; margin-bottom: 1rem;">
+                <span class="tag" style="font-size: 1rem; padding: 0.5rem 1rem; background-color: #dbeafe; color: #1e40af;">
+                    📅 Showing all events
+                </span>
+                
+                <button @click="clearAllFilters" class="btn btn-small btn-outline" style="margin-left: 1rem;">
+                    {{ displayMode.default === 'upcoming' ? 'Show Upcoming ✕' : 'Show This Week ✕' }}
+                </button>
+            </div>
+            <div v-else class="mb-2" style="text-align: center; margin-bottom: 1rem;">
+                <span v-if="displayMode.current === 'this-week'" class="tag" style="font-size: 1rem; padding: 0.5rem 1rem; background-color: #d8c7fe; color: #240e92;">
+                    📅 Showing events this week ({{ getThisWeekDates().startDate.split('T')[0] }} - {{ getThisWeekDates().endDate.split('T')[0] }})
+                </span>
+                <span v-else-if="displayMode.current === 'upcoming'" class="tag" style="font-size: 1rem; padding: 0.5rem 1rem; background-color: #dbeafe; color: #1e3a8a;">
+                    🔮 Showing upcoming events
+                </span>
+                <button @click="viewAllEvents" class="btn btn-small btn-outline" style="margin-left: 1rem;">
+                    View All Events 📅
+                </button>
+            </div>
+               
 
                 <!-- Search Component -->
                 <div class="search-bar">
                     <input type="text" 
                            class="search-input" 
                            placeholder="Search events, venues, or organizers..."
-                           @input = "debounceSearch"
                            v-model="searchQuery">
                     <button class="search-btn">🔍</button>
                 </div>
@@ -676,97 +770,193 @@
                         </div>
                     </div>
                 </div>
-
-                
             </div>
 
-            <!-- Events List View (would be separate component) -->
-            <div class="page-view hidden" id="events-view">
+            <!-- Create Event View -->
+            <div class="page-view" id="create-event-view" v-show="currentRoute === '/create'">
                 <div class="page-header">
-                    <h1 class="page-title">Browse All Events</h1>
-                    <p class="page-subtitle">Discover what's happening in Auckland</p>
+                    <h1 class="page-title">Create New Event</h1>
+                    <p class="page-subtitle">Share your event with the Auckland community</p>
                 </div>
 
+                <div class="card" style="max-width: 800px; margin: 0 auto;">
+                    <div class="card-body">
+                        <form @submit.prevent="submitEvent">
+                            <div class="form-group">
+                                <label class="form-label">Event Title *</label>
+                                <input type="text" class="form-input" v-model="newEvent.title" required placeholder="e.g., Summer Music Festival">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-textarea" v-model="newEvent.description" rows="4" placeholder="Tell people about your event..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Category *</label>
+                                <select class="form-select" v-model="newEvent.category" required>
+                                    <option value="">Select a category</option>
+                                    <option>Music & Concerts</option>
+                                    <option>Arts & Culture</option>
+                                    <option>Food & Drink</option>
+                                    <option>Sports & Fitness</option>
+                                    <option>Business & Tech</option>
+                                    <option>Family & Kids</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                    <label class="form-label">Event Date *</label>
+                                    <input type="date" class="form-input" v-model="newEvent.date" required>
+                            </div>
+                                <div class="form-group">
+                                    <label class="form-label">Event Time *</label>
+                                    <input type="time" class="form-input" v-model="newEvent.time" required>
+                                </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Venue Name *</label>
+                                <input type="text" class="form-input" v-model="newEvent.venueName" required placeholder="e.g., Western Springs Stadium">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Organizer Name *</label>
+                                <input type="text" class="form-input" v-model="newEvent.organizerName" required placeholder="e.g., Auckland Live Events">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Is this a free event?</label>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" v-model="newEvent.isFree" id="isFree">
+                                    <label for="isFree" style="margin: 0; font-weight: normal;">Yes, this event is free</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group" v-if="!newEvent.isFree">
+                                <label class="form-label">Price Range</label>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                    <div>
+                                        <input type="number" class="form-input" v-model.number="newEvent.minPrice" placeholder="Min Price ($)" min="0">
+                                    </div>
+                                    <div>
+                                        <input type="number" class="form-input" v-model.number="newEvent.maxPrice" placeholder="Max Price ($)" min="0">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                                <button type="submit" class="btn btn-primary" :disabled="submitting">
+                                    {{ submitting ? 'Creating...' : 'Create Event 🎉' }}
+                                </button>
+                                <button type="button" class="btn btn-secondary" @click="cancelCreate">
+                                    Cancel
+                                </button>
+                            </div>
+
+                            <div v-if="submitError" class="mt-2" style="color: var(--danger-color); font-weight: 600;">
+                                {{ submitError }}
+                            </div>
+                            <div v-if="submitSuccess" class="mt-2" style="color: var(--success-color); font-weight: 600;">
+                                ✓ Event created successfully!
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
                 <!-- Filters Component -->
                 <div class="filters-bar">
                     <div class="filters-grid">
                         <div class="form-group">
-                            <label class="form-label">Category</label>
-                            <select class="form-select">
-                                <option>All Categories</option>
-                                <option>Music & Concerts</option>
-                                <option>Arts & Culture</option>
-                                <option>Food & Drink</option>
-                                <option>Sports & Fitness</option>
-                                <option>Business & Tech</option>
-                                <option>Family & Kids</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
                             <label class="form-label">Date Range</label>
-                            <select class="form-select">
-                                <option>All Dates</option>
-                                <option>This Weekend</option>
-                                <option>Next Week</option>
-                                <option>This Month</option>
+                            <select class="form-select" v-model="filters.dateRange">
+                                <option value="all">All Dates</option>
+                                <option value="today">Today</option>
+                                <option value="tomorrow">Tomorrow</option>
+                                <option value="this-weekend">This Weekend</option>
+                                <option value="next-week">Next Week</option>
+                                <option value="this-month">This Month</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Price Range</label>
-                            <select class="form-select">
-                                <option>All Prices</option>
-                                <option>Free</option>
-                                <option>Under $25</option>
-                                <option>$25 - $50</option>
-                                <option>$50+</option>
+                            <select class="form-select" v-model="filters.priceRange">
+                                <option value="all">All Prices</option>
+                                <option value="free">Free</option>
+                                <option value="under-25">Under $25</option>
+                                <option value="25-50">$25 - $50</option>
+                                <option value="50-100">$50 - $100</option>
+                                <option value="over-100">$100+</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Location</label>
-                            <input type="text" class="form-input" placeholder="Enter suburb or venue">
+                            <input type="text" class="form-input" v-model="filters.locationQuery" placeholder="Enter suburb or venue">
+                        </div>
+                        <div class="form-group" style="display: flex; align-items: flex-end;">
+                            <button @click="clearAdvancedFilters" class="btn btn-outline" style="width: 100%;">
+                                Clear Filters
+                            </button>
                         </div>
                     </div>
                 </div>
-
-                <!-- Events List Component -->
-                <div class="events-grid">
-                    <!-- Event cards would be rendered here with v-for -->
-                    <div class="loading-spinner">
-                        <div class="spinner"></div>
+                <!-- Event Detail Modal -->
+                <div v-if="selectedEvent" class="modal-overlay" @click="closeEventDetail">
+                    <div class="modal-content" @click.stop>
+                        <button class="modal-close" @click="closeEventDetail">✕</button>
+                        
+                        <div class="event-image" style="height: 250px;">
+                            {{ getCategoryEmoji(selectedEvent.category) }}
+                        </div>
+                        
+                        <div class="modal-body">
+                            <div class="event-date mb-2">📅 {{ formatDate(selectedEvent.dateTime) }}</div>
+                            <h1 class="event-title" style="font-size: 2rem;">{{ selectedEvent.title }}</h1>
+                            
+                            <div class="event-meta mb-3" style="justify-content: flex-start; gap: 2rem;">
+                                <div class="event-location">📍 {{ getLocation(selectedEvent.location) }}</div>
+                                <div class="event-price">💰 {{ getPrice(selectedEvent.pricing) }}</div>
+                            </div>
+                            
+                            <div class="event-tags mb-3">
+                                <span class="tag">{{ selectedEvent.category }}</span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem;">About this event</h3>
+                                <p class="event-description">
+                                    {{ selectedEvent.description || 'No description available.' }}
+                                </p>
+                            </div>
+                            
+                            <div v-if="selectedEvent.organizer" class="mb-3">
+                                <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem;">Organizer</h3>
+                                <p style="color: var(--text-secondary);">
+                                    {{ selectedEvent.organizer.name || 'Organizer information not available' }}
+                                </p>
+                            </div>
+                            
+                            <div v-if="selectedEvent.location?.venueId" class="mb-3">
+                                <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem;">Venue Details</h3>
+                                <p style="color: var(--text-secondary);">
+                                    <strong>{{ selectedEvent.location.venueId.name }}</strong><br>
+                                    <span v-if="selectedEvent.location.venueId.address">
+                                        {{ selectedEvent.location.venueId.address.street }}<br>
+                                        {{ selectedEvent.location.venueId.address.suburb }}, {{ selectedEvent.location.venueId.address.city }}
+                                    </span>
+                                </p>
+                            </div>
+                            
+                            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                                <button class="btn btn-primary">Add to Favorites ❤️</button>
+                                <button class="btn btn-secondary">Share Event 📤</button>
+                                <button class="btn btn-outline">Get Directions 🗺️</button>
+                            </div>
+                        </div>
                     </div>
+                </div>
                 </div>
             </div>
 
-            <!-- Event Detail Modal/View (would be separate component) -->
-            <div class="page-view hidden" id="event-detail">
-                <div class="card">
-                    <div class="event-image" style="height: 300px;">🎪</div>
-                    <div class="card-body">
-                        <div class="event-date mb-2">📅 Saturday, September 16, 2025</div>
-                        <h1 class="event-title">Auckland Night Market</h1>
-                        <div class="event-meta mb-3">
-                            <div class="event-location">📍 Queen Street, Auckland CBD</div>
-                            <div class="event-price">💰 Free Entry</div>
-                        </div>
-                        <div class="event-tags mb-3">
-                            <span class="tag">Food</span>
-                            <span class="tag">Market</span>
-                            <span class="tag">Family Friendly</span>
-                            <span class="tag">Outdoor</span>
-                        </div>
-                        <p class="event-description mb-3">
-                            Join us for Auckland's premier night market featuring over 50 food stalls, local artisan vendors, 
-                            and live entertainment. Experience flavors from around the world while enjoying the vibrant 
-                            atmosphere of Queen Street after dark.
-                        </p>
-                        <div style="display: flex; gap: 1rem;">
-                            <button class="btn btn-primary">Add to Favorites ❤️</button>
-                            <button class="btn btn-secondary">Share Event 📤</button>
-                            <button class="btn btn-outline">Get Directions 🗺️</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </main>
     </div>
 
@@ -780,13 +970,32 @@ createApp({
             loading: true,
             error: null,
             searchQuery: '',
-            debounceTimer: null,
-            currentRoute: window.location.hash.slice(1) || '/', //Gets the hash part, defaults to '/'
+            currentRoute: window.location.hash.slice(1) || '/',
             selectedCategory: null,
-            defaultDateFilter: true, //Flag to know if we should apply the weekend filter
+            showAllEvents: false,
+            selectedEvent: null,
+            submitting: false,
+            submitError: null,
+            submitSuccess: false,
+            filters: {
+                dateRange: 'all',
+                priceRange: 'all',
+                locationQuery: ''
+
+            },
+            newEvent: {
+                title: '',
+                description: '',
+                category: '',
+                dateTime: '',
+                venueName: '',
+                organizerName: '',
+                isFree: false,
+                minPrice: null,
+                maxPrice: null
+            }
         }
     },
-
     async mounted() {
        //--- ROUTING SETUP ---
        //Listen for hash changes (e.g when a user clicks a nav link)
@@ -794,19 +1003,15 @@ createApp({
         this.currentRoute = window.location.hash.slice(1) || '/'
        });
 
+       //Close modal on esc key
+       window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && this.selectedEvent){
+            this.closeEventDetail();
+        }
+       })
+
        //--- DATA FETCHING ---
-       try {
-        const response = await fetch('/api/events');
-        //Assuming the API returns a standard array of events
-        this.events = await response.json();
-        
-        //Simulate adding a unique ID since fetch/json doesnt
-        //this.events = this.events.map((e, index) => ({...e, _id: e._d || index}))
-       } catch(err){
-        this.error = 'Could not connect to the API. Check the server is running.';
-       } finally {
-        this.loading = false;
-       }
+    await this.fetchEvents();
     },
 
     computed: {
@@ -821,55 +1026,225 @@ createApp({
             return 'home-view';
         },
 
-        filteredEvents()
-        {
-          let events = this.events;
-          console.log('Starting with events:', events.length)
+        filteredEvents() {
+        let events = this.events;
+        console.log('Starting with events:', events.length);
 
-          if (this.selectedCategory){
-            return events.filter(event => event.category === this.selectedCategory);
-          }
-          //If searching, filter by search query
-          else if (this.searchQuery && this.searchQuery.trim() !== '')
-          {
+        // 1. Category filter (from category cards)
+        if (this.selectedCategory) {
+            events = events.filter(event => event.category === this.selectedCategory);
+        }
+        
+        // 2. Search query filter
+        if (this.searchQuery && this.searchQuery.trim() !== '') {
             const search = this.searchQuery.toLowerCase();
-            return events.filter(event =>
+            events = events.filter(event =>
                 event.title.toLowerCase().includes(search) ||
-                (event.description && event.description.toLowerCase().includes(search) ||
-                event.location?.venueName && event.location.venueName.toLowerCase().includes(search))
+                (event.description && event.description.toLowerCase().includes(search)) ||
+                (event.location?.venueName && event.location.venueName.toLowerCase().includes(search))
             );
-          }
-          //Otherwise, show only "this week" events
-          else {
+        }
+        
+        // 3. Location filter
+        if (this.filters.locationQuery && this.filters.locationQuery.trim() !== '') {
+            const location = this.filters.locationQuery.toLowerCase();
+            events = events.filter(event =>
+                (event.location?.venueName && event.location.venueName.toLowerCase().includes(location)) ||
+                (event.location?.address?.suburb && event.location.address.suburb.toLowerCase().includes(location)) ||
+                (event.location?.address?.city && event.location.address.city.toLowerCase().includes(location))
+            );
+        }
+        
+        // 4. Price range filter
+        if (this.filters.priceRange !== 'all') {
+            events = events.filter(event => {
+                const pricing = event.pricing;
+                
+                if (this.filters.priceRange === 'free') {
+                    return pricing?.isFree === true;
+                }
+                
+                // For paid events, check min/max price
+                const minPrice = pricing?.minPrice || 0;
+                const maxPrice = pricing?.maxPrice || minPrice;
+                
+                switch(this.filters.priceRange) {
+                    case 'under-25':
+                        return !pricing?.isFree && maxPrice < 25;
+                    case '25-50':
+                        return !pricing?.isFree && minPrice >= 25 && maxPrice <= 50;
+                    case '50-100':
+                        return !pricing?.isFree && minPrice >= 50 && maxPrice <= 100;
+                    case 'over-100':
+                        return !pricing?.isFree && minPrice >= 100;
+                    default:
+                        return true;
+                }
+            });
+        }
+        
+        // 5. Date range filter
+        if (this.filters.dateRange !== 'all') {
+            const now = new Date();
+            now.setHours(0, 0, 0, 0);
+            
+            events = events.filter(event => {
+                if (!event.dateTime || !event.dateTime.start) return false;
+                
+                const eventDate = new Date(event.dateTime.start);
+                eventDate.setHours(0, 0, 0, 0);
+                
+                switch(this.filters.dateRange) {
+                    case 'today':
+                        return eventDate.getTime() === now.getTime();
+                        
+                    case 'tomorrow':
+                        const tomorrow = new Date(now);
+                        tomorrow.setDate(tomorrow.getDate() + 1);
+                        return eventDate.getTime() === tomorrow.getTime();
+                        
+                    case 'this-weekend':
+                        const dayOfWeek = now.getDay();
+                        const daysUntilSaturday = (6 - dayOfWeek + 7) % 7;
+                        const saturday = new Date(now);
+                        saturday.setDate(saturday.getDate() + daysUntilSaturday);
+                        const sunday = new Date(saturday);
+                        sunday.setDate(sunday.getDate() + 1);
+                        return eventDate.getTime() === saturday.getTime() || 
+                            eventDate.getTime() === sunday.getTime();
+                        
+                    case 'next-week':
+                        const nextWeekStart = new Date(now);
+                        nextWeekStart.setDate(nextWeekStart.getDate() + 7);
+                        const nextWeekEnd = new Date(nextWeekStart);
+                        nextWeekEnd.setDate(nextWeekEnd.getDate() + 7);
+                        return eventDate >= nextWeekStart && eventDate < nextWeekEnd;
+                        
+                    case 'this-month':
+                        return eventDate.getMonth() === now.getMonth() && 
+                            eventDate.getFullYear() === now.getFullYear();
+                        
+                    default:
+                        return true;
+                }
+            });
+        }
+        
+        // 6. If "View All Events" is active and no other filters, show everything
+        if (this.showAllEvents && 
+            !this.selectedCategory && 
+            !this.searchQuery && 
+            !this.filters.locationQuery &&
+            this.filters.dateRange === 'all' &&
+            this.filters.priceRange === 'all') {
+            return events;
+        }
+        
+        // 7. Default: show only "this week" events (if no filters are active)
+        if (!this.selectedCategory && 
+            !this.searchQuery && 
+            !this.filters.locationQuery &&
+            this.filters.dateRange === 'all' &&
+            this.filters.priceRange === 'all' &&
+            !this.showAllEvents) {
+            
             const dates = this.getThisWeekDates();
             const today = new Date(dates.startDate);
             const endOfWeek = new Date(dates.endDate);
             
-            console.log('This week filter:');
-            console.log('Today:', today);
-            console.log('End of week:', endOfWeek);
-            
-            const filtered = events.filter(event => {
-                if(!event.dateTime || !event.dateTime.start) {
-                    console.log('Event has no date:', event.title);
+            const thisWeekEvents = events.filter(event => {  // Fixed: was missing 'const thisWeekEvents ='
+                if (!event.dateTime || !event.dateTime.start) {
                     return false;
                 }
                 const eventDate = new Date(event.dateTime.start);
-                console.log(`Event: ${event.title}, Date: ${eventDate}, In range: ${eventDate >= today && eventDate <= endOfWeek}`);
                 return eventDate >= today && eventDate <= endOfWeek;
             });
-            
-            console.log('Filtered events count:', filtered.length);
-            return filtered;
-            }
 
+            // If no events this week, show upcoming events instead
+            if (thisWeekEvents.length === 0) {  // Fixed: was 'getThisWeekDates.length'
+                console.log('No events this week, showing all upcoming events');
+                events = events.filter(event => {
+                    if (!event.dateTime || !event.dateTime.start) return false;
+                    const eventDate = new Date(event.dateTime.start);  // Fixed: was 'new date' (lowercase d)
+                    return eventDate >= today; // Show all future events
+                });
+            } else {
+                events = thisWeekEvents;
+            }
         }
+
+        console.log('Filtered events count:', events.length);
+        return events;
+        },
+
+      displayMode() {
+        // 1. Determine the "Default View" (what happens when no filters are active)
+        const dates = this.getThisWeekDates();
+        const today = new Date(dates.startDate);
+        const endOfWeek = new Date(dates.endDate);
+
+        const thisWeekEventsCount = this.events.filter(event => {
+            if (!event.dateTime || !event.dateTime.start) return false;
+            const eventDate = new Date(event.dateTime.start);
+            return eventDate >= today && eventDate <= endOfWeek;
+        }).length;
+
+        // The view the app defaults to when all filters are cleared
+        const defaultMode = thisWeekEventsCount > 0 ? 'this-week' : 'upcoming';
+
+        // 2. Determine the "Current View"
+        let currentMode;
+        if (this.selectedCategory) {
+            currentMode = 'category';
+        } else if (this.searchQuery) {
+            currentMode = 'search';
+        } else if (this.showAllEvents) {
+            currentMode = 'all';
+        } else if (this.filters.locationQuery || this.filters.dateRange !== 'all' || this.filters.priceRange !== 'all') {
+            currentMode = 'filtered';
+        } else {
+            // If no filters are active, the current view IS the default view
+            currentMode = defaultMode;
+        }
+
+        // 3. Return the composite state object (always)
+        return {
+            current: currentMode,
+            default: defaultMode,
+            // isFiltered is true if the current view is NOT one of the default/global views
+            isFiltered: currentMode !== 'this-week' && currentMode !== 'upcoming' && currentMode !== 'all'
+        };
+    },
     },
 
+
     methods: { 
-        viewEvent(eventId) {
+            async viewEvent(eventId) {
             console.log('View event:', eventId);
-            alert('Event details coming soon! Event ID: ' + eventId);
+
+            try {
+                //Fetch the full event details with populated references
+                const response = await fetch(`/api/events/${eventId}`)  // Fixed: added /
+                if (!response.ok){
+                    throw new Error('Failed to load event details');
+                }
+
+                this.selectedEvent = await response.json();
+                console.log('Selected event:', this.selectedEvent);
+
+                //Prevent body scroll
+                document.body.classList.add('modal-open');
+            } catch (err) {
+                console.error('Error loading event:', err);
+                alert('Could not load event details. Please try again.');
+            }
+        },
+        
+
+        closeEventDetail(){
+            this.selectedEvent = null;
+            //Re enable body scroll
+            document.body.classList.remove('modal-open')
         },
 
         getThisWeekDates()
@@ -907,14 +1282,6 @@ createApp({
                 params.append('category', this.selectedCategory);
             }
 
-            //Apply "This week" filter only if no search/category filter is active
-            if (applyDefaultFilter){
-                const dates = this.getThisWeekDates();
-                params.append('startDate', dates.startDate);
-                params.append('endDate', dates.endDate);
-                console.log('Applying "This Week" filter:', dates)
-            }
-
            const url = `/api/events?${params.toString()}`;
 
             //Only add 'search' parameter if searchQuery is not empty
@@ -943,15 +1310,6 @@ createApp({
 
             
         },
-
-         //2. NEW: Debounce function for search input optimization
-        debounceSearch() {
-            clearTimeout(this.debounceTimer);
-            this.debounceTimer = setTimeout(() =>{
-                this.fetchEvents();
-            }, 300); //Wait 300ms after the user stops typing before fetching
-        },
-
 
         getCategoryEmoji(category) {
             const emojis = {
@@ -1010,28 +1368,134 @@ createApp({
             return 'Location TBA';
         },
 
-        filterByCategory(category){
-        //If clicking the same category, clear the filter
-        console.log('Filtering by:', category);
-        console.log('Current selected category:', this.selectedCategory);
-        if (this.selectedCategory === category)
-        {
-            this.selectedCategory = null;
-            console.log('Cleared filter, total events:', this.events.length);
+        filterByCategory(category) {
+        if (this.selectedCategory === category) {
+        this.selectedCategory = null;
         } else {
-        //Otherwise, set the new category
-            this.selectedCategory = category
-            console.log('Set Filter to:', category);
+        this.selectedCategory = category;
         }
         },
 
+        viewAllEvents() {
+            this.showAllEvents = true;
+            this.selectedCategory = null;
+            this.searchQuery = '';
+        },
 
+        clearAllFilters() {
+            this.showAllEvents = false;
+            this.selectedCategory = null;
+            this.searchQuery = '';
+            this.filters = {
+                dateRange: 'all',
+                priceRange: 'all',
+                locationQuery: ''
+            };
+        },
+    
 
         clearFilter() {
             this.selectedCategory = null;
             this.fetchEvents();
-        }
-    }  // methods object closes here
+        },
+
+        clearAdvancedFilters() {
+            this.filters = {
+                dateRange: 'all',
+                priceRange: 'all',
+                locationQuery: ''
+            };
+        },
+
+        async submitEvent() {
+            this.submitting = true;
+            this.submitError = null;
+            this.submitSuccess = false;
+
+            try {
+                // Combine date and time into ISO format
+                const eventDateTime = new Date(`${this.newEvent.date}T${this.newEvent.time}`).toISOString();
+                
+                // Create slug from title
+                const slug = this.newEvent.title
+                    .toLowerCase()
+                    .trim()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^\w\-]+/g, '')
+                    .slice(0, 100);
+
+                const payload = {
+                    title: this.newEvent.title,
+                    description: this.newEvent.description,
+                    category: this.newEvent.category,
+                    dateTime: {
+                        start: eventDateTime
+                    },
+                    slug: slug,
+                    venueName: this.newEvent.venueName,
+                    organizerName: this.newEvent.organizerName,
+                    pricing: {
+                        isFree: this.newEvent.isFree,
+                        minPrice: this.newEvent.isFree ? null : this.newEvent.minPrice,
+                        maxPrice: this.newEvent.isFree ? null : this.newEvent.maxPrice
+                    }
+                };
+
+                const response = await fetch('/api/events', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to create event: ${response.status}`);
+                }
+
+                const createdEvent = await response.json();
+                
+                // Add to local events array
+                this.events.push(createdEvent);
+                
+                this.submitSuccess = true;
+                
+                // Reset form
+                this.resetEventForm();
+                
+                // Redirect to home after 2 seconds
+                setTimeout(() => {
+                    window.location.hash = '/';
+                    this.submitSuccess = false;
+                }, 2000);
+
+            } catch (err) {
+                console.error('Submit error:', err);
+                this.submitError = err.message;
+            } finally {
+                this.submitting = false;
+            }
+    },
+    cancelCreate() {
+        this.resetEventForm();
+        window.location.hash = '/';
+    },
+
+    resetEventForm() {
+        this.newEvent = {
+            title: '',
+            description: '',
+            category: '',
+            date: '',
+            time: '',
+            venueName: '',
+            organizerName: '',
+            isFree: false,
+            minPrice: null,
+            maxPrice: null
+        };
+    }
+}  // methods object closes here
 }).mount('#app');
 </script>   
 </body>
