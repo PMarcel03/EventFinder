@@ -8,61 +8,286 @@
 <body>
   <h1>Upcoming Events for Scraper Test</h1>
   
-  <!-- Event 1: First instance of Venue A and Organizer A -->
+  <!-- FREE EVENTS -->
+  <div class="event">
+    <h2 class="title">Morning Yoga in the Park</h2>
+    <p class="description">Start your day with rejuvenating yoga session at Albert Park. All levels welcome. Bring your own mat.</p>
+    <span class="category">Sports & Fitness</span>
+    <span class="date">2025-10-31T08:00:00+13:00</span>
+    <span class="venue-name">Albert Park</span>
+    <span class="organizer-name">Auckland Wellness Collective</span>
+    <span class="pricing">{"isFree": true}</span>
+  </div>
+  
+  <div class="event">
+    <h2 class="title">Tech Startup Networking</h2>
+    <p class="description">Connect with local tech entrepreneurs and investors. Free pizza and drinks provided.</p>
+    <span class="category">Business & Tech</span>
+    <span class="date">2025-10-31T18:30:00+13:00</span>
+    <span class="venue-name">GridAKL</span>
+    <span class="organizer-name">Tech Auckland</span>
+    <span class="pricing">{"isFree": true}</span>
+  </div>
+
+  <!-- UNDER $25 EVENTS -->
+  <div class="event">
+    <h2 class="title">Jazz Night at Civic</h2>
+    <p class="description">Experience an evening of smooth jazz with local musicians in an intimate setting.</p>
+    <span class="category">Music & Concerts</span>
+    <span class="date">2025-11-01T20:00:00+13:00</span>
+    <span class="venue-name">The Civic</span>
+    <span class="organizer-name">Auckland Jazz Society</span>
+    <span class="pricing">{"isFree": false, "minPrice": 15, "maxPrice": 20}</span>
+  </div>
+
+  <div class="event">
+    <h2 class="title">Saturday Farmers Market</h2>
+    <p class="description">Fresh produce, artisan foods, and live music every Saturday morning.</p>
+    <span class="category">Food & Drink</span>
+    <span class="date">2025-11-02T08:00:00+13:00</span>
+    <span class="venue-name">Britomart Square</span>
+    <span class="organizer-name">Eat Street Collective</span>
+    <span class="pricing">{"isFree": false, "minPrice": 5, "maxPrice": 15}</span>
+  </div>
+
+  <!-- $25-50 EVENTS -->
+  <div class="event">
+    <h2 class="title">Children's Art Workshop</h2>
+    <p class="description">Creative art activities for kids aged 5-12. All materials provided.</p>
+    <span class="category">Family & Kids</span>
+    <span class="date">2025-11-03T10:00:00+13:00</span>
+    <span class="venue-name">Auckland Art Gallery</span>
+    <span class="organizer-name">NZ Art Council</span>
+    <span class="pricing">{"isFree": false, "minPrice": 25, "maxPrice": 25}</span>
+  </div>
+
+  <div class="event">
+    <h2 class="title">Auckland Marathon 2025</h2>
+    <p class="description">Annual marathon through Auckland's scenic routes. Multiple race categories available.</p>
+    <span class="category">Sports & Fitness</span>
+    <span class="date">2025-11-05T07:00:00+13:00</span>
+    <span class="venue-name">Victoria Park</span>
+    <span class="organizer-name">Auckland Sports Events</span>
+    <span class="pricing">{"isFree": false, "minPrice": 30, "maxPrice": 45}</span>
+  </div>
+
+  <!-- $50-100 EVENTS -->
+  <div class="event">
+    <h2 class="title">Maori Cultural Performance</h2>
+    <p class="description">Traditional Maori songs, dances, and storytelling at the Auckland Museum.</p>
+    <span class="category">Arts & Culture</span>
+    <span class="date">2025-11-06T14:00:00+13:00</span>
+    <span class="venue-name">Auckland War Memorial Museum</span>
+    <span class="organizer-name">Auckland Cultural Trust</span>
+    <span class="pricing">{"isFree": false, "minPrice": 55, "maxPrice": 75}</span>
+  </div>
+
+  <div class="event">
+    <h2 class="title">Wine Tasting Evening</h2>
+    <p class="description">Sample premium New Zealand wines with expert sommeliers. Cheese platter included.</p>
+    <span class="category">Food & Drink</span>
+    <span class="date">2025-11-15T19:00:00+13:00</span>
+    <span class="venue-name">The French Cafe</span>
+    <span class="organizer-name">NZ Wine Society</span>
+    <span class="pricing">{"isFree": false, "minPrice": 65, "maxPrice": 65}</span>
+  </div>
+
+  <!-- $100+ EVENTS -->
+  <div class="event">
+    <h2 class="title">Comedy Festival Gala</h2>
+    <p class="description">Top NZ comedians showcase their best material in this hilarious evening.</p>
+    <span class="category">Arts & Culture</span>
+    <span class="date">2025-11-20T20:30:00+13:00</span>
+    <span class="venue-name">Aotea Centre</span>
+    <span class="organizer-name">Auckland Live Events</span>
+    <span class="pricing">{"isFree": false, "minPrice": 120, "maxPrice": 150}</span>
+  </div>
+
+  <div class="event">
+    <h2 class="title">Premium Business Conference</h2>
+    <p class="description">Industry leaders share insights on digital transformation and innovation.</p>
+    <span class="category">Business & Tech</span>
+    <span class="date">2025-11-14T09:00:00+13:00</span>
+    <span class="venue-name">SkyCity Convention Centre</span>
+    <span class="organizer-name">Business NZ</span>
+    <span class="pricing">{"isFree": false, "minPrice": 299, "maxPrice": 499}</span>
+  </div>
+
+  <!-- MIXED PRICE RANGES FOR COMPREHENSIVE TESTING -->
+  <div class="event">
+    <h2 class="title">Free Outdoor Cinema</h2>
+    <p class="description">Screening of classic Kiwi films under the stars. Bring blankets and picnic.</p>
+    <span class="category">Family & Kids</span>
+    <span class="date">2025-11-08T19:30:00+13:00</span>
+    <span class="venue-name">Western Springs Stadium</span>
+    <span class="organizer-name">Auckland City Council</span>
+    <span class="pricing">{"isFree": true}</span>
+  </div>
+
+  <div class="event">
+    <h2 class="title">Community Garden Workshop</h2>
+    <p class="description">Learn sustainable gardening techniques. Free seedlings for participants.</p>
+    <span class="category">Family & Kids</span>
+    <span class="date">2025-11-12T10:00:00+13:00</span>
+    <span class="venue-name">Cornwall Park</span>
+    <span class="organizer-name">Sustainable Auckland</span>
+    <span class="pricing">{"isFree": true}</span>
+  </div>
+
+  <div class="event">
+    <h2 class="title">International Food Festival</h2>
+    <p class="description">Taste cuisine from 20+ countries. Live cooking demonstrations and cultural performances.</p>
+    <span class="category">Food & Drink</span>
+    <span class="date">2025-11-09T11:00:00+13:00</span>
+    <span class="venue-name">ASB Showgrounds</span>
+    <span class="organizer-name">Global Events NZ</span>
+    <span class="pricing">{"isFree": false, "minPrice": 18, "maxPrice": 18}</span>
+  </div>
+
+  <div class="event">
+    <h2 class="title">Parnell Art Walk</h2>
+    <p class="description">Guided tour of Parnell's best art galleries and studios.</p>
+    <span class="category">Arts & Culture</span>
+    <span class="date">2025-11-07T13:00:00+13:00</span>
+    <span class="venue-name">Parnell Galleries</span>
+    <span class="organizer-name">Parnell Business Association</span>
+    <span class="pricing">{"isFree": false, "minPrice": 35, "maxPrice": 35}</span>
+  </div>
+
+  <div class="event">
+    <h2 class="title">Takapuna Beach Festival</h2>
+    <p class="description">Beach sports, live music, and food trucks at Takapuna Beach.</p>
+    <span class="category">Sports & Fitness</span>
+    <span class="date">2025-11-10T12:00:00+13:00</span>
+    <span class="venue-name">Takapuna Beach</span>
+    <span class="organizer-name">North Shore Events</span>
+    <span class="pricing">{"isFree": false, "minPrice": 10, "maxPrice": 25}</span>
+  </div>
+
+  <div class="event">
+    <h2 class="title">Newmarket Fashion Show</h2>
+    <p class="description">Latest fashion trends from Newmarket's top boutiques and designers.</p>
+    <span class="category">Arts & Culture</span>
+    <span class="date">2025-11-11T18:00:00+13:00</span>
+    <span class="venue-name">Westfield Newmarket</span>
+    <span class="organizer-name">Newmarket Retail Association</span>
+    <span class="pricing">{"isFree": false, "minPrice": 45, "maxPrice": 45}</span>
+  </div>
+
+  <div class="event">
+    <h2 class="title">Silent Disco in the Domain</h2>
+    <p class="description">Dance under the stars with wireless headphones. Three DJ channels to choose from.</p>
+    <span class="category">Music & Concerts</span>
+    <span class="date">2025-11-16T20:00:00+13:00</span>
+    <span class="venue-name">Auckland Domain</span>
+    <span class="organizer-name">Silent Events Auckland</span>
+    <span class="pricing">{"isFree": false, "minPrice": 25, "maxPrice": 35}</span>
+  </div>
+
+  <div class="event">
+    <h2 class="title">Craft Beer Festival</h2>
+    <p class="description">Sample 100+ craft beers from NZ's best breweries. Food trucks and live music.</p>
+    <span class="category">Food & Drink</span>
+    <span class="date">2025-11-22T14:00:00+13:00</span>
+    <span class="venue-name">Silo Park</span>
+    <span class="organizer-name">NZ Brewers Association</span>
+    <span class="pricing">{"isFree": false, "minPrice": 75, "maxPrice": 95}</span>
+  </div>
+
+  <!-- ORIGINAL TEST EVENTS WITH PRICING -->
   <div class="event">
     <h2 class="title">Summer Music Festival</h2>
     <p class="description">Three day outdoor music festival featuring local and international artists.</p>
     <span class="category">Music & Concerts</span>
-    <span class="date">2025-12-15T18:00:00Z</span>
-    <!-- New required fields for normalization -->
+    <span class="date">2025-12-15T18:00:00+13:00</span>
     <span class="venue-name">Western Springs Stadium</span>
     <span class="organizer-name">Auckland Live Events</span>
+    <span class="pricing">{"isFree": false, "minPrice": 89, "maxPrice": 189}</span>
   </div>
   
-  <!-- Event 2: First instance of Venue B, Organizer B -->
   <div class="event">
     <h2 class="title">Auckland Art Exhibition</h2>
     <p class="description">Contemporary art showcase featuring emerging New Zealand artists.</p>
     <span class="category">Arts & Culture</span>
-    <span class="date">2025-11-20T10:00:00Z</span>
-    <!-- New required fields for normalization -->
+    <span class="date">2025-11-20T10:00:00+13:00</span>
     <span class="venue-name">Aotea Centre</span>
     <span class="organizer-name">NZ Art Council</span>
+    <span class="pricing">{"isFree": false, "minPrice": 15, "maxPrice": 15}</span>
   </div>
   
-  <!-- Event 3: Unique Event, Unique Venue, Unique Organizer -->
   <div class="event">
     <h2 class="title">Street Food Market</h2>
     <p class="description">Weekly food market with cuisines from around the world.</p>
     <span class="category">Food & Drink</span>
-    <span class="date">2025-11-10T16:00:00Z</span>
-    <!-- New required fields for normalization -->
+    <span class="date">2025-11-10T16:00:00+13:00</span>
     <span class="venue-name">Britomart Square</span>
     <span class="organizer-name">Eat Street Collective</span>
+    <span class="pricing">{"isFree": false, "minPrice": 8, "maxPrice": 20}</span>
   </div>
   
-  <!-- Event 4: Event title is same as Event 1, but date/venue is different (Should be created) -->
   <div class="event">
-    <h2 class="title">Summer Music Festival</h2>
+    <h2 class="title">Summer Music Festival (Indoor)</h2>
     <p class="description">A smaller indoor version of the summer festival.</p>
     <span class="category">Music & Concerts</span>
-    <span class="date">2025-12-16T19:00:00Z</span> 
-    <!-- New required fields for normalization -->
+    <span class="date">2025-12-16T19:00:00+13:00</span>
     <span class="venue-name">Britomart Square</span>
     <span class="organizer-name">Auckland Live Events</span>
+    <span class="pricing">{"isFree": false, "minPrice": 45, "maxPrice": 65}</span>
   </div>
 
-  <!-- Event 5: Uses Venue B ("Aotea Centre") and Organizer A ("Auckland Live Events") again 
-       This will test that the normalized IDs are reused correctly. -->
   <div class="event">
     <h2 class="title">Kids Fun Day</h2>
     <p class="description">Family-friendly activities, games, and entertainment for kids.</p>
     <span class="category">Family & Kids</span>
-    <span class="date">2025-11-05T14:00:00Z</span>
-    <!-- Reused fields for normalization test -->
+    <span class="date">2025-11-05T14:00:00+13:00</span>
     <span class="venue-name">Aotea Centre</span>
     <span class="organizer-name">Auckland Live Events</span>
+    <span class="pricing">{"isFree": true}</span>
   </div>
-  
+
+  <!-- ADDITIONAL PRICE RANGE TESTING EVENTS -->
+  <div class="event">
+    <h2 class="title">Budget Movie Night</h2>
+    <p class="description">Classic film screening with popcorn and drink included.</p>
+    <span class="category">Arts & Culture</span>
+    <span class="date">2025-11-13T19:00:00+13:00</span>
+    <span class="venue-name">Academy Cinema</span>
+    <span class="organizer-name">Cinema Auckland</span>
+    <span class="pricing">{"isFree": false, "minPrice": 12, "maxPrice": 12}</span>
+  </div>
+
+  <div class="event">
+    <h2 class="title">Mid-Range Concert</h2>
+    <p class="description">Popular local band performing their greatest hits.</p>
+    <span class="category">Music & Concerts</span>
+    <span class="date">2025-11-18T20:00:00+13:00</span>
+    <span class="venue-name">Powerstation</span>
+    <span class="organizer-name">Live Music NZ</span>
+    <span class="pricing">{"isFree": false, "minPrice": 40, "maxPrice": 40}</span>
+  </div>
+
+  <div class="event">
+    <h2 class="title">Premium Dining Experience</h2>
+    <p class="description">Five-course degustation menu with wine pairing.</p>
+    <span class="category">Food & Drink</span>
+    <span class="date">2025-11-25T19:30:00+13:00</span>
+    <span class="venue-name">Sidart</span>
+    <span class="organizer-name">Fine Dining Auckland</span>
+    <span class="pricing">{"isFree": false, "minPrice": 185, "maxPrice": 185}</span>
+  </div>
+
+  <!-- FREE MUSIC & CONCERTS EVENT FOR THIS MONTH -->
+<div class="event">
+    <h2 class="title">Free Community Concert Series</h2>
+    <p class="description">Enjoy an evening of live music featuring local bands and artists. This community concert series showcases emerging talent from across Auckland. Bring your friends, family, and a picnic blanket for a relaxing evening of diverse musical genres including indie, folk, and acoustic performances.</p>
+    <span class="category">Music & Concerts</span>
+    <span class="date">2025-10-22T18:00:00+13:00</span>
+    <span class="venue-name">Myers Park</span>
+    <span class="organizer-name">Auckland Community Arts</span>
+    <span class="pricing">{"isFree": true}</span>
+    <span class="suburb">CBD</span>
+    <span class="city">Auckland</span>
+</div>
+
 </body>
 </html>

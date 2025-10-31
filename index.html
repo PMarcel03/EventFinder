@@ -264,6 +264,55 @@
             box-shadow: 0 0 0 3px rgb(139 92 246 / 0.1);
         }
 
+        /* Custom dropdown arrow for better visibility */
+        .form-input[type="date"] {
+            /* background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E"); */
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.25rem;
+        }
+
+        .form-input[type="time"] {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cpolyline points='12 6 12 12 16 14'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.25rem;
+        }
+
+        .input-error {
+            border-color: var(--danger-color) !important;
+            box-shadow: 0 0 0 3px rgb(239 68 68 / 0.1) !important;
+        }
+
+        .form-error {
+            color: var(--danger-color);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            font-weight: 500;
+        }
+
+        /* Success and Error Message Styles */
+        .submit-message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            font-weight: 600;
+        }
+
+        .submit-success {
+            color: var(--success-color);
+            background-color: #f0fdf4;
+            border: 1px solid var(--success-color);
+        }
+
+        .submit-error {
+            color: var(--danger-color);
+            background-color: #fef2f2;
+            border: 1px solid var(--danger-color);
+        }
+
+
+        /*Search Bar */
         .search-bar {
             position: relative;
             max-width: 500px;
@@ -394,6 +443,7 @@
             border-radius: 1rem;
             padding: 1.5rem;
             margin-bottom: 2rem;
+            margin-top: 2rem;
             box-shadow: var(--shadow);
         }
 
@@ -496,40 +546,31 @@
             transform: translateX(-100%);
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .header-content {
-                padding: 1rem;
-                flex-direction: column;
-                gap: 1rem;
-            }
+        .nav {
+            order: -1;
+            width: 100%;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
 
-            .nav {
-                order: -1;
-                width: 100%;
-                justify-content: center;
-                flex-wrap: wrap;
-            }
+        .main-content {
+            padding: 1rem;
+        }
 
-            .main-content {
-                padding: 1rem;
-            }
+        .page-title {
+            font-size: 2rem;
+        }
 
-            .page-title {
-                font-size: 2rem;
-            }
+        .events-grid {
+            grid-template-columns: 1fr;
+        }
 
-            .events-grid {
-                grid-template-columns: 1fr;
-            }
+        .filters-grid {
+            grid-template-columns: 1fr;
+        }
 
-            .filters-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .categories-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        .categories-grid {
+            grid-template-columns: repeat(2, 1fr);
         }
 
         @keyframes spin {
@@ -620,6 +661,221 @@
         .mt-1 { margin-top: 0.5rem; }
         .mt-2 { margin-top: 1rem; }
         .mt-3 { margin-top: 1.5rem; }
+
+/* Tablet Styles (769px - 1024px) */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .header-content {
+        padding: 0.5rem 1rem;
+        flex-wrap: nowrap;
+        gap: 1rem;
+    }
+
+    .logo {
+        font-size: 1.3rem;
+        flex-shrink: 0;
+    }
+
+    .nav {
+        flex: 1;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+    .nav-link {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.85rem;
+    }
+
+    .user-menu {
+        flex-shrink: 0;
+        gap: 0.5rem;
+    }
+
+    .location-indicator {
+        display: none; /* Hide location on tablet */
+    }
+
+    .btn-small {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* Mobile Styles (768px and below) - SIMPLIFIED */
+@media (max-width: 768px) {
+    .header {
+        position: sticky;
+        top: 0;
+    }
+
+    .header-content {
+        padding: 0.5rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .logo {
+        font-size: 1.2rem;
+        order: 1;
+    }
+
+    .user-menu {
+        order: 2;
+        margin-left: auto;
+    }
+
+    .nav {
+        order: 3;
+        width: 100%;
+        justify-content: space-around;
+        gap: 0.25rem;
+        margin-top: 0.25rem;
+    }
+
+    .nav-link {
+        padding: 0.35rem 0.5rem;
+        font-size: 0.8rem;
+        flex: 1;
+        text-align: center;
+        min-width: 0;
+    }
+
+    /* Hide less important elements on mobile */
+    .location-indicator {
+        display: none; /* Hide location completely on mobile */
+    }
+
+    /* Simplify the sign in button */
+    .btn-small {
+        padding: 0.35rem 0.6rem;
+        font-size: 0.75rem;
+    }
+
+    /* Clean up main content */
+    .main-content {
+        padding: 0.75rem;
+    }
+
+    .page-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .page-title {
+        font-size: 1.5rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .page-subtitle {
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+
+    /* Reduce spacing in categories */
+    .categories-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        margin: 1.5rem 0;
+    }
+
+    .category-card {
+        padding: 1rem 0.75rem;
+    }
+
+    .category-icon {
+        font-size: 1.25rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .category-name {
+        font-size: 0.85rem;
+    }
+
+    .category-count {
+        font-size: 0.75rem;
+    }
+}
+
+ .mb-2 {
+        margin-bottom: 1rem !important;
+        padding: 0.5rem;
+        background: #f8fafc;
+        border-radius: 0.5rem;
+        border: 1px solid var(--border-color);
+    }
+
+    .mb-2 > .tag {
+        display: inline-block;
+        margin-bottom: 0;
+        padding: 0.4rem 0.75rem;
+        font-size: 0.8rem;
+        background: white;
+        border: 1px solid var(--border-color);
+    }
+
+    .mb-2 .btn {
+        width: auto;
+        margin-left: 0.5rem !important;
+        margin-top: 0;
+        padding: 0.4rem 0.75rem;
+        font-size: 0.8rem;
+    }
+
+    /* Stack only when necessary */
+    @media (max-width: 480px) {
+        .mb-2 {
+            text-align: center;
+        }
+        
+        .mb-2 .btn {
+            display: block;
+            width: 100%;
+            margin-left: 0 !important;
+            margin-top: 0.5rem;
+        }
+    }
+
+/* Tablet specific fix */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .mb-2 {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .mb-2 > .tag {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+    }
+    
+    .mb-2 .btn {
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+    .header-content {
+        padding: 0.4rem;
+    }
+
+    .logo {
+        font-size: 1.1rem;
+    }
+
+    .nav-link {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.4rem;
+    }
+
+    .btn-small {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.7rem;
+    }
+
+    .page-title {
+        font-size: 1.3rem;
+    }
+}
+/*End of Mobile Optimisations */
     </style>
 </head>
 <body>
@@ -680,7 +936,7 @@
             </div>
             <div v-else class="mb-2" style="text-align: center; margin-bottom: 1rem;">
                 <span v-if="displayMode.current === 'this-week'" class="tag" style="font-size: 1rem; padding: 0.5rem 1rem; background-color: #d8c7fe; color: #240e92;">
-                    📅 Showing events this week ({{ getThisWeekDates().startDate.split('T')[0] }} - {{ getThisWeekDates().endDate.split('T')[0] }})
+                    📅 Showing events this week ({{ formatDate({start: getThisWeekDates().startDate}) }} - {{ formatDate({start: getThisWeekDates().endDate}) }})
                 </span>
                 <span v-else-if="displayMode.current === 'upcoming'" class="tag" style="font-size: 1rem; padding: 0.5rem 1rem; background-color: #dbeafe; color: #1e3a8a;">
                     🔮 Showing upcoming events
@@ -700,40 +956,40 @@
                     <button class="search-btn">🔍</button>
                 </div>
 
-
                 <!-- Categories Component -->
                 <div class="categories-grid">
                     <div class="category-card" @click="filterByCategory('Music & Concerts')">
                         <span class="category-icon">🎵</span>
                         <div class="category-name">Music & Concerts</div>
-                        <div class="category-count">24 events</div>
+                        <div class="category-count">{{ categoryCounts['Music & Concerts'] }} {{ categoryCounts['Music & Concerts'] === 1 ? 'event' : 'events' }}</div>
                     </div>
                     <div class="category-card" @click="filterByCategory('Arts & Culture')">
                         <span class="category-icon">🎨</span>
                         <div class="category-name">Arts & Culture</div>
-                        <div class="category-count">18 events</div>
+                        <div class="category-count">{{ categoryCounts['Arts & Culture'] }} {{ categoryCounts['Arts & Culture'] === 1 ? 'event' : 'events' }}</div>
                     </div>
                     <div class="category-card" @click="filterByCategory('Food & Drink')">
                         <span class="category-icon">🍕</span>
                         <div class="category-name">Food & Drink</div>
-                        <div class="category-count">31 events</div>
+                        <div class="category-count">{{ categoryCounts['Food & Drink'] }} {{ categoryCounts['Food & Drink'] === 1 ? 'event' : 'events' }}</div>
                     </div>
                     <div class="category-card" @click="filterByCategory('Sports & Fitness')">
                         <span class="category-icon">🏃‍♂️</span>
                         <div class="category-name">Sports & Fitness</div>
-                        <div class="category-count">15 events</div>
+                        <div class="category-count">{{ categoryCounts['Sports & Fitness'] }} {{ categoryCounts['Sports & Fitness'] === 1 ? 'event' : 'events' }}</div>
                     </div>
                     <div class="category-card" @click="filterByCategory('Business & Tech')">
                         <span class="category-icon">💼</span>
                         <div class="category-name">Business & Tech</div>
-                        <div class="category-count">12 events</div>
+                        <div class="category-count">{{ categoryCounts['Business & Tech'] }} {{ categoryCounts['Business & Tech'] === 1 ? 'event' : 'events' }}</div>
                     </div>
                     <div class="category-card" @click="filterByCategory('Family & Kids')">
                         <span class="category-icon">👨‍👩‍👧‍👦</span>
                         <div class="category-name">Family & Kids</div>
-                        <div class="category-count">22 events</div>
+                        <div class="category-count">{{ categoryCounts['Family & Kids'] }} {{ categoryCounts['Family & Kids'] === 1 ? 'event' : 'events' }}</div>
                     </div>
                 </div>
+            
                 <div class ="events-grid">
                     <!--Loading State-->
                     <div v-if="loading" class="loading-spinner">
@@ -805,23 +1061,42 @@
                                 </select>
                             </div>
 
+                        <div class="form-group">
+                            <label class="form-label">Event Date *</label>
+                            <input type="date" 
+                                class="form-input" 
+                                v-model="newEvent.date" 
+                                @input="validateDateInput($event)"
+                                @invalid="handleDateInvalid($event)"
+                                required
+                                ref="dateInput">
+                        </div>
+                                                                        
                             <div class="form-group">
-                                    <label class="form-label">Event Date *</label>
-                                    <input type="date" class="form-input" v-model="newEvent.date" required>
+                                <label class="form-label">Event Time *</label>
+                                <input type="time" class="form-input" v-model="newEvent.time" required>
                             </div>
-                                <div class="form-group">
-                                    <label class="form-label">Event Time *</label>
-                                    <input type="time" class="form-input" v-model="newEvent.time" required>
-                                </div>
 
                             <div class="form-group">
                                 <label class="form-label">Venue Name *</label>
-                                <input type="text" class="form-input" v-model="newEvent.venueName" required placeholder="e.g., Western Springs Stadium">
+                                <input type="text" 
+                                    class="form-input" 
+                                    v-model="newEvent.venueName" 
+                                    required 
+                                    placeholder="e.g., Western Springs Stadium"
+                                    :class="{ 'input-error': !newEvent.venueName && formTouched }">
+                                <div v-if="!newEvent.venueName && formTouched" class="form-error">Venue name is required</div>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">Organizer Name *</label>
-                                <input type="text" class="form-input" v-model="newEvent.organizerName" required placeholder="e.g., Auckland Live Events">
+                                <input type="text" 
+                                    class="form-input" 
+                                    v-model="newEvent.organizerName" 
+                                    required 
+                                    placeholder="e.g., Auckland Live Events"
+                                    :class="{ 'input-error': !newEvent.organizerName && formTouched }">
+                                <div v-if="!newEvent.organizerName && formTouched" class="form-error">Organizer name is required</div>
                             </div>
 
                             <div class="form-group">
@@ -844,6 +1119,15 @@
                                 </div>
                             </div>
 
+                            <!-- Success and Error Messages -->
+                            <div v-if="submitError" class="mt-2" style="color: var(--danger-color); font-weight: 600; padding: 1rem; background-color: #fef2f2; border-radius: 0.5rem; border: 1px solid var(--danger-color);">
+                                ⚠️ {{ submitError }}
+                            </div>
+                            
+                            <div v-if="submitSuccess" class="mt-2" style="color: var(--success-color); font-weight: 600; padding: 1rem; background-color: #f0fdf4; border-radius: 0.5rem; border: 1px solid var(--success-color);">
+                                ✅ Event created successfully! Redirecting to home page...
+                            </div>
+
                             <div style="display: flex; gap: 1rem; margin-top: 2rem;">
                                 <button type="submit" class="btn btn-primary" :disabled="submitting">
                                     {{ submitting ? 'Creating...' : 'Create Event 🎉' }}
@@ -852,17 +1136,12 @@
                                     Cancel
                                 </button>
                             </div>
-
-                            <div v-if="submitError" class="mt-2" style="color: var(--danger-color); font-weight: 600;">
-                                {{ submitError }}
-                            </div>
-                            <div v-if="submitSuccess" class="mt-2" style="color: var(--success-color); font-weight: 600;">
-                                ✓ Event created successfully!
-                            </div>
                         </form>
                     </div>
                 </div>
             </div>
+
+
                 <!-- Filters Component -->
                 <div class="filters-bar">
                     <div class="filters-grid">
@@ -894,7 +1173,7 @@
                         </div>
                         <div class="form-group" style="display: flex; align-items: flex-end;">
                             <button @click="clearAdvancedFilters" class="btn btn-outline" style="width: 100%;">
-                                Clear Filters
+                                Clear All Filters
                             </button>
                         </div>
                     </div>
@@ -966,23 +1245,32 @@ const {createApp, computed} = Vue;
 createApp({
     data() {
         return {
+            //Core data Models
             events: [],
+            selectedEvent: null,
+            
+            //UI State Models
             loading: true,
             error: null,
-            searchQuery: '',
-            currentRoute: window.location.hash.slice(1) || '/',
-            selectedCategory: null,
-            showAllEvents: false,
-            selectedEvent: null,
             submitting: false,
             submitError: null,
             submitSuccess: false,
+
+            //Controller State Models
+            currentRoute: window.location.hash.slice(1) || '/',
+            selectedCategory: null,
+            searchQuery: '',
+            showAllEvents: false,
+          
+            
+            //Filter Models
             filters: {
                 dateRange: 'all',
                 priceRange: 'all',
                 locationQuery: ''
 
             },
+            //Form Models
             newEvent: {
                 title: '',
                 description: '',
@@ -993,7 +1281,8 @@ createApp({
                 isFree: false,
                 minPrice: null,
                 maxPrice: null
-            }
+            },
+            formTouched: false, // Add this
         }
     },
     async mounted() {
@@ -1027,194 +1316,238 @@ createApp({
         },
 
         filteredEvents() {
-        let events = this.events;
-        console.log('Starting with events:', events.length);
+            let events = this.events;
+            console.log('Starting with events:', events.length);
 
-        // 1. Category filter (from category cards)
-        if (this.selectedCategory) {
-            events = events.filter(event => event.category === this.selectedCategory);
-        }
-        
-        // 2. Search query filter
-        if (this.searchQuery && this.searchQuery.trim() !== '') {
-            const search = this.searchQuery.toLowerCase();
-            events = events.filter(event =>
-                event.title.toLowerCase().includes(search) ||
-                (event.description && event.description.toLowerCase().includes(search)) ||
-                (event.location?.venueName && event.location.venueName.toLowerCase().includes(search))
-            );
-        }
-        
-        // 3. Location filter
-        if (this.filters.locationQuery && this.filters.locationQuery.trim() !== '') {
-            const location = this.filters.locationQuery.toLowerCase();
-            events = events.filter(event =>
-                (event.location?.venueName && event.location.venueName.toLowerCase().includes(location)) ||
-                (event.location?.address?.suburb && event.location.address.suburb.toLowerCase().includes(location)) ||
-                (event.location?.address?.city && event.location.address.city.toLowerCase().includes(location))
-            );
-        }
-        
-        // 4. Price range filter
-        if (this.filters.priceRange !== 'all') {
-            events = events.filter(event => {
-                const pricing = event.pricing;
-                
-                if (this.filters.priceRange === 'free') {
-                    return pricing?.isFree === true;
-                }
-                
-                // For paid events, check min/max price
-                const minPrice = pricing?.minPrice || 0;
-                const maxPrice = pricing?.maxPrice || minPrice;
-                
-                switch(this.filters.priceRange) {
-                    case 'under-25':
-                        return !pricing?.isFree && maxPrice < 25;
-                    case '25-50':
-                        return !pricing?.isFree && minPrice >= 25 && maxPrice <= 50;
-                    case '50-100':
-                        return !pricing?.isFree && minPrice >= 50 && maxPrice <= 100;
-                    case 'over-100':
-                        return !pricing?.isFree && minPrice >= 100;
-                    default:
-                        return true;
-                }
-            });
-        }
-        
-        // 5. Date range filter
-        if (this.filters.dateRange !== 'all') {
-            const now = new Date();
-            now.setHours(0, 0, 0, 0);
+            // 1. Category filter (from category cards)
+            if (this.selectedCategory) {
+                events = events.filter(event => event.category === this.selectedCategory);
+            }
             
-            events = events.filter(event => {
-                if (!event.dateTime || !event.dateTime.start) return false;
-                
-                const eventDate = new Date(event.dateTime.start);
-                eventDate.setHours(0, 0, 0, 0);
-                
-                switch(this.filters.dateRange) {
-                    case 'today':
-                        return eventDate.getTime() === now.getTime();
-                        
-                    case 'tomorrow':
-                        const tomorrow = new Date(now);
-                        tomorrow.setDate(tomorrow.getDate() + 1);
-                        return eventDate.getTime() === tomorrow.getTime();
-                        
-                    case 'this-weekend':
-                        const dayOfWeek = now.getDay();
-                        const daysUntilSaturday = (6 - dayOfWeek + 7) % 7;
-                        const saturday = new Date(now);
-                        saturday.setDate(saturday.getDate() + daysUntilSaturday);
-                        const sunday = new Date(saturday);
-                        sunday.setDate(sunday.getDate() + 1);
-                        return eventDate.getTime() === saturday.getTime() || 
-                            eventDate.getTime() === sunday.getTime();
-                        
-                    case 'next-week':
-                        const nextWeekStart = new Date(now);
-                        nextWeekStart.setDate(nextWeekStart.getDate() + 7);
-                        const nextWeekEnd = new Date(nextWeekStart);
-                        nextWeekEnd.setDate(nextWeekEnd.getDate() + 7);
-                        return eventDate >= nextWeekStart && eventDate < nextWeekEnd;
-                        
-                    case 'this-month':
-                        return eventDate.getMonth() === now.getMonth() && 
-                            eventDate.getFullYear() === now.getFullYear();
-                        
-                    default:
-                        return true;
-                }
-            });
-        }
-        
-        // 6. If "View All Events" is active and no other filters, show everything
-        if (this.showAllEvents && 
-            !this.selectedCategory && 
-            !this.searchQuery && 
-            !this.filters.locationQuery &&
-            this.filters.dateRange === 'all' &&
-            this.filters.priceRange === 'all') {
-            return events;
-        }
-        
-        // 7. Default: show only "this week" events (if no filters are active)
-        if (!this.selectedCategory && 
-            !this.searchQuery && 
-            !this.filters.locationQuery &&
-            this.filters.dateRange === 'all' &&
-            this.filters.priceRange === 'all' &&
-            !this.showAllEvents) {
+            // 2. Search query filter
+            if (this.searchQuery && this.searchQuery.trim() !== '') {
+                const search = this.searchQuery.toLowerCase();
+                events = events.filter(event =>
+                    event.title.toLowerCase().includes(search) ||
+                    (event.description && event.description.toLowerCase().includes(search)) ||
+                    (event.location?.venueName && event.location.venueName.toLowerCase().includes(search))
+                );
+            }
             
-            const dates = this.getThisWeekDates();
-            const today = new Date(dates.startDate);
-            const endOfWeek = new Date(dates.endDate);
+            // 3. Location filter
+            if (this.filters.locationQuery && this.filters.locationQuery.trim() !== '') {
+                const location = this.filters.locationQuery.toLowerCase();
+                events = events.filter(event =>
+                    (event.location?.venueName && event.location.venueName.toLowerCase().includes(location)) ||
+                    (event.location?.address?.suburb && event.location.address.suburb.toLowerCase().includes(location)) ||
+                    (event.location?.address?.city && event.location.address.city.toLowerCase().includes(location))
+                );
+            }
             
-            const thisWeekEvents = events.filter(event => {  // Fixed: was missing 'const thisWeekEvents ='
-                if (!event.dateTime || !event.dateTime.start) {
-                    return false;
-                }
-                const eventDate = new Date(event.dateTime.start);
-                return eventDate >= today && eventDate <= endOfWeek;
-            });
-
-            // If no events this week, show upcoming events instead
-            if (thisWeekEvents.length === 0) {  // Fixed: was 'getThisWeekDates.length'
-                console.log('No events this week, showing all upcoming events');
+            // 4. Price range filter
+            if (this.filters.priceRange !== 'all') {
+                events = events.filter(event => {
+                    const pricing = event.pricing;
+                    
+                    if (this.filters.priceRange === 'free') {
+                        return pricing?.isFree === true;
+                    }
+                    
+                    // For paid events, check min/max price
+                    const minPrice = pricing?.minPrice || 0;
+                    const maxPrice = pricing?.maxPrice || minPrice;
+                    
+                    switch(this.filters.priceRange) {
+                        case 'under-25':
+                            return !pricing?.isFree && maxPrice < 25;
+                        case '25-50':
+                            return !pricing?.isFree && minPrice >= 25 && maxPrice <= 50;
+                        case '50-100':
+                            return !pricing?.isFree && minPrice >= 50 && maxPrice <= 100;
+                        case 'over-100':
+                            return !pricing?.isFree && minPrice >= 100;
+                        default:
+                            return true;
+                    }
+                });
+            }
+            
+            // 5. Advanced Date range filter (from filters bar)
+            if (this.filters.dateRange !== 'all') {
+                const now = new Date();
+                
                 events = events.filter(event => {
                     if (!event.dateTime || !event.dateTime.start) return false;
-                    const eventDate = new Date(event.dateTime.start);  // Fixed: was 'new date' (lowercase d)
-                    return eventDate >= today; // Show all future events
+                    
+                    const eventDate = new Date(event.dateTime.start);
+                    
+                    // Convert both dates to NZ timezone for accurate comparison
+                    const nzOffset = 12 * 60 * 60 * 1000; // NZ is UTC+12
+                    
+                    // Create dates in NZ timezone
+                    const nzNow = new Date(now.getTime() + nzOffset);
+                    const nzEventDate = new Date(eventDate.getTime() + nzOffset);
+                    
+                    // Set to start of day for date comparison
+                    const startOfToday = new Date(nzNow);
+                    startOfToday.setUTCHours(0, 0, 0, 0);
+                    
+                    const startOfEventDay = new Date(nzEventDate);
+                    startOfEventDay.setUTCHours(0, 0, 0, 0);
+                    
+                    // Calculate day of week once for all cases that need it
+                    const dayOfWeek = startOfToday.getUTCDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+                    
+                    switch(this.filters.dateRange) {
+                        case 'today':
+                            return startOfEventDay.getTime() === startOfToday.getTime();
+                            
+                        case 'tomorrow':
+                            const startOfTomorrow = new Date(startOfToday);
+                            startOfTomorrow.setUTCDate(startOfTomorrow.getUTCDate() + 1);
+                            return startOfEventDay.getTime() === startOfTomorrow.getTime();
+                            
+                        case 'this-weekend':
+                            const daysUntilSaturday = dayOfWeek === 0 ? 6 : 6 - dayOfWeek; // Saturday is day 6
+                            const daysUntilSunday = dayOfWeek === 0 ? 0 : 7 - dayOfWeek;   // Sunday is day 0
+                            
+                            const saturday = new Date(startOfToday);
+                            saturday.setUTCDate(saturday.getUTCDate() + daysUntilSaturday);
+                            
+                            const sunday = new Date(startOfToday);
+                            sunday.setUTCDate(sunday.getUTCDate() + daysUntilSunday);
+                            
+                            return startOfEventDay.getTime() === saturday.getTime() || 
+                                startOfEventDay.getTime() === sunday.getTime();
+                            
+                        case 'next-week':
+                            const nextWeekStart = new Date(startOfToday);
+                            // Move to next Monday
+                            const daysUntilNextMonday = dayOfWeek === 0 ? 1 : 8 - dayOfWeek;
+                            nextWeekStart.setUTCDate(nextWeekStart.getUTCDate() + daysUntilNextMonday);
+                            
+                            const nextWeekEnd = new Date(nextWeekStart);
+                            nextWeekEnd.setUTCDate(nextWeekEnd.getUTCDate() + 6); // End of next Sunday
+                            nextWeekEnd.setUTCHours(23, 59, 59, 999);
+                            
+                            return startOfEventDay >= nextWeekStart && startOfEventDay <= nextWeekEnd;
+                            
+                        case 'this-month':
+                            const currentMonth = startOfToday.getUTCMonth();
+                            const currentYear = startOfToday.getUTCFullYear();
+                            return startOfEventDay.getUTCMonth() === currentMonth && 
+                                startOfEventDay.getUTCFullYear() === currentYear;
+                            
+                        default:
+                            return true;
+                    }
                 });
-            } else {
-                events = thisWeekEvents;
             }
-        }
+            
+            // 6. Default view filtering (only apply if no other filters are active)
+            const hasActiveFilters = this.selectedCategory || 
+                                    this.searchQuery || 
+                                    this.filters.locationQuery ||
+                                    this.filters.dateRange !== 'all' ||
+                                    this.filters.priceRange !== 'all';
+            
+            if (!hasActiveFilters && !this.showAllEvents) {
+                // Apply default "this week" or "upcoming" filter
+                const dates = this.getThisWeekDates();
+                const today = dates.startDate;
+                const endOfWeek = dates.endDate;
+                
+                console.log('=== DEBUG: Default View Filter ===');
+                console.log('Week start:', today.toISOString(), today.toLocaleString("en-NZ"));
+                console.log('Week end:', endOfWeek.toISOString(), endOfWeek.toLocaleString("en-NZ"));
+                
+                const thisWeekEvents = events.filter(event => {
+                    if (!event.dateTime || !event.dateTime.start) return false;
+                    return this.isDateInRange(event.dateTime.start, today, endOfWeek);
+                });
 
-        console.log('Filtered events count:', events.length);
-        return events;
+                console.log('This week events count:', thisWeekEvents.length);
+                
+                if (thisWeekEvents.length === 0) {
+                    console.log('No events this week, showing upcoming events');
+                    events = events.filter(event => {
+                        if (!event.dateTime || !event.dateTime.start) return false;
+                        const eventDate = new Date(event.dateTime.start);
+                        return eventDate >= today;
+                    });
+                } else {
+                    events = thisWeekEvents;
+                }
+            }
+
+            console.log('Filtered events count:', events.length);
+            return events;
         },
 
-      displayMode() {
-        // 1. Determine the "Default View" (what happens when no filters are active)
-        const dates = this.getThisWeekDates();
-        const today = new Date(dates.startDate);
-        const endOfWeek = new Date(dates.endDate);
+        categoryCounts: {
+            get() {
+                const counts = {};
+                const categories = [
+                    'Music & Concerts', 
+                    'Arts & Culture', 
+                    'Food & Drink', 
+                    'Sports & Fitness', 
+                    'Business & Tech', 
+                    'Family & Kids'
+                ];
+                
+                // Initialize all categories with 0
+                categories.forEach(cat => counts[cat] = 0);
+                
+                // Count events for each category from filteredEvents
+                this.filteredEvents.forEach(event => {
+                    if (event.category && counts.hasOwnProperty(event.category)) {
+                        counts[event.category]++;
+                    }
+                });
+                
+                return counts;
+            }
+        },
 
-        const thisWeekEventsCount = this.events.filter(event => {
-            if (!event.dateTime || !event.dateTime.start) return false;
-            const eventDate = new Date(event.dateTime.start);
-            return eventDate >= today && eventDate <= endOfWeek;
-        }).length;
+        
+        displayMode(){
+            // 1. Determine the "Default View" (what happens when no filters are active)
+            const dates = this.getThisWeekDates();
+            const today = dates.startDate;
+            const endOfWeek = dates.endDate;
 
-        // The view the app defaults to when all filters are cleared
-        const defaultMode = thisWeekEventsCount > 0 ? 'this-week' : 'upcoming';
+            const thisWeekEventsCount = this.events.filter(event => {
+                if (!event.dateTime || !event.dateTime.start) return false;
+                return this.isDateInRange(event.dateTime.start, today, endOfWeek);
+            }).length;
 
-        // 2. Determine the "Current View"
-        let currentMode;
-        if (this.selectedCategory) {
-            currentMode = 'category';
-        } else if (this.searchQuery) {
-            currentMode = 'search';
-        } else if (this.showAllEvents) {
-            currentMode = 'all';
-        } else if (this.filters.locationQuery || this.filters.dateRange !== 'all' || this.filters.priceRange !== 'all') {
-            currentMode = 'filtered';
-        } else {
-            // If no filters are active, the current view IS the default view
-            currentMode = defaultMode;
+            // The view the app defaults to when all filters are cleared
+            const defaultMode = thisWeekEventsCount > 0 ? 'this-week' : 'upcoming';
+
+            // 2. Determine the "Current View"
+            let currentMode;
+            if (this.selectedCategory) {
+                currentMode = 'category';
+            } else if (this.searchQuery) {
+                currentMode = 'search';
+            } else if (this.showAllEvents) {
+                currentMode = 'all';
+            } else if (this.filters.locationQuery || this.filters.dateRange !== 'all' || this.filters.priceRange !== 'all') {
+                currentMode = 'filtered';
+            } else {
+                // If no filters are active, the current view IS the default view
+                currentMode = defaultMode;
+            }
+
+            // 3. Return the composite state object (always)
+            return {
+                current: currentMode,
+                default: defaultMode,
+                // isFiltered is true if the current view is NOT one of the default/global views
+                isFiltered: currentMode !== 'this-week' && currentMode !== 'upcoming' && currentMode !== 'all'
+            };
         }
-
-        // 3. Return the composite state object (always)
-        return {
-            current: currentMode,
-            default: defaultMode,
-            // isFiltered is true if the current view is NOT one of the default/global views
-            isFiltered: currentMode !== 'this-week' && currentMode !== 'upcoming' && currentMode !== 'all'
-        };
-    },
     },
 
 
@@ -1239,7 +1572,6 @@ createApp({
                 alert('Could not load event details. Please try again.');
             }
         },
-        
 
         closeEventDetail(){
             this.selectedEvent = null;
@@ -1247,23 +1579,74 @@ createApp({
             document.body.classList.remove('modal-open')
         },
 
-        getThisWeekDates()
-        {
-            const today = new Date();
-            //Set time to the start of the current day
-            today.setHours(0, 0, 0, 0);
-
-            //Calculate the date for the end of the 7th day from now (E.g if today is Tuesday the end date is the following monday at 23:59:59)
-            const sevenDaysFromNow = new Date(today);
-            sevenDaysFromNow.setDate(today.getDate() + 7);
-            sevenDaysFromNow.setHours(23, 59, 59, 999)
-
-            return{
-                //Start date is NOW (Or start of today)
-                startDate: today.toISOString(),
-                endDate: sevenDaysFromNow.toISOString()
+        getThisWeekDates() {
+            // Get current date
+            const now = new Date();
+            
+            // Get the timezone offset for NZ (UTC+12 hours in milliseconds)
+            // We'll use a fixed offset since NZ is UTC+12
+            const nzOffset = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
+            
+            // Adjust current time to NZ time
+            const nzNow = new Date(now.getTime() + nzOffset);
+            
+            // Start of today in NZ time (set to midnight)
+            const startOfToday = new Date(nzNow);
+            startOfToday.setUTCHours(0, 0, 0, 0);
+            
+            // Get day of week (0 = Sunday, 1 = Monday, ...)
+            const dayOfWeek = startOfToday.getUTCDay();
+            
+            // Calculate start of week (Monday)
+            const startOfWeek = new Date(startOfToday);
+            const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+            startOfWeek.setUTCDate(startOfToday.getUTCDate() + diffToMonday);
+            
+            // End of week (Sunday)
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setUTCDate(startOfWeek.getUTCDate() + 6);
+            endOfWeek.setUTCHours(23, 59, 59, 999);
+            
+            // Convert back to local time for comparison with event dates
+            const startLocal = new Date(startOfWeek.getTime() - nzOffset);
+            const endLocal = new Date(endOfWeek.getTime() - nzOffset);
+            
+            console.log('NZ This week range:', {
+                start: startLocal.toISOString(),
+                end: endLocal.toISOString(),
+                startNZ: startLocal.toLocaleString("en-NZ", { timeZone: "Pacific/Auckland" }),
+                endNZ: endLocal.toLocaleString("en-NZ", { timeZone: "Pacific/Auckland" })
+            });
+            
+            return {
+                startDate: startLocal,
+                endDate: endLocal
             };
         },
+
+        isDateInRange(eventDate, startDate, endDate) {
+            try {
+                // Parse the dates
+                const eventDateObj = new Date(eventDate);
+                const startDateObj = new Date(startDate);
+                const endDateObj = new Date(endDate);
+                
+                // Check if dates are valid
+                if (isNaN(eventDateObj.getTime()) || isNaN(startDateObj.getTime()) || isNaN(endDateObj.getTime())) {
+                    console.error('Invalid date in range comparison');
+                    return false;
+                }
+                
+                // Compare dates (including time)
+                return eventDateObj >= startDateObj && eventDateObj <= endDateObj;
+            } catch (error) {
+                console.error('Error in date range comparison:', error);
+                return false;
+            }
+        },
+
+        
+
 
         async fetchEvents(){
             this.loading = true;
@@ -1325,12 +1708,24 @@ createApp({
 
         formatDate(dateTime) {
             if (!dateTime || !dateTime.start) return 'Date TBA';
-            const date = new Date(dateTime.start);  // Fixed: was 'data'
-            return date.toLocaleDateString('en-NZ', {
-                weekday: 'short',
-                month: 'short',
-                day: 'numeric'
-            });
+
+            try{
+                //Parse date string and force NZ timezone
+                const date = new Date(dateTime.start);
+
+                //Use localestring with explicit NZ timezone
+                return date.toLocaleDateString('en-NZ', {
+                    weekday:'short',
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    timeZone: 'Pacific/Auckland'
+                });
+            } catch (error){
+                console.error('Date formatting error:', error);
+                return 'Date TBA'
+            }
+        
         },
 
         getPrice(pricing) {
@@ -1402,19 +1797,56 @@ createApp({
         clearAdvancedFilters() {
             this.filters = {
                 dateRange: 'all',
+                selectedCategory:  null,
+                searchQuery: '',
                 priceRange: 'all',
                 locationQuery: ''
             };
         },
 
+        validateForm() {
+            this.formTouched = true;
+            return this.newEvent.title && 
+                this.newEvent.category && 
+                this.newEvent.date && 
+                this.newEvent.time && 
+                this.newEvent.venueName && 
+                this.newEvent.organizerName;
+        },
+
         async submitEvent() {
+            if (!this.validateForm()) {
+                this.submitError = 'Please fill in all required fields';
+                return;
+            }
+
             this.submitting = true;
             this.submitError = null;
             this.submitSuccess = false;
 
             try {
+                // Validate required fields
+                if (!this.newEvent.venueName.trim()) {
+                    throw new Error('Venue name is required');
+                }
+                if (!this.newEvent.organizerName.trim()) {
+                    throw new Error('Organizer name is required');
+                }
+
+                const selectedDate = new Date(this.newEvent.date);
+                const selectedYear = selectedDate.getFullYear();
+                const currentYear = new Date().getFullYear();
+
+                if (selectedYear < 2020 || selectedYear > currentYear + 2) {
+                    throw new Error(`Please select a date between 2020 and ${currentYear + 2}`);
+                }
+
+                // Create date in NZ timezone explicitly
+                const dateString = `${this.newEvent.date}T${this.newEvent.time}:00`;
+                const localDate = new Date(dateString);
+
                 // Combine date and time into ISO format
-                const eventDateTime = new Date(`${this.newEvent.date}T${this.newEvent.time}`).toISOString();
+                const eventDateTime = localDate.toISOString();
                 
                 // Create slug from title
                 const slug = this.newEvent.title
@@ -1432,7 +1864,11 @@ createApp({
                         start: eventDateTime
                     },
                     slug: slug,
-                    venueName: this.newEvent.venueName,
+                    // Update venue structure to match your Event model
+                    location: {
+                        venueName: this.newEvent.venueName
+                    },
+                    // Update organizer structure
                     organizerName: this.newEvent.organizerName,
                     pricing: {
                         isFree: this.newEvent.isFree,
@@ -1450,7 +1886,8 @@ createApp({
                 });
 
                 if (!response.ok) {
-                    throw new Error(`Failed to create event: ${response.status}`);
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `Failed to create event: ${response.status}`);
                 }
 
                 const createdEvent = await response.json();
@@ -1470,31 +1907,72 @@ createApp({
                 }, 2000);
 
             } catch (err) {
-                console.error('Submit error:', err);
-                this.submitError = err.message;
-            } finally {
-                this.submitting = false;
-            }
-    },
-    cancelCreate() {
-        this.resetEventForm();
-        window.location.hash = '/';
-    },
+                    console.error('Submit error:', err);
+                    this.submitError = err.message;
+                    this.submitSuccess = false; // Ensure success is false on error
+                } finally {
+                    this.submitting = false;
+                }
+        },
 
-    resetEventForm() {
-        this.newEvent = {
-            title: '',
-            description: '',
-            category: '',
-            date: '',
-            time: '',
-            venueName: '',
-            organizerName: '',
-            isFree: false,
-            minPrice: null,
-            maxPrice: null
-        };
-    }
+        validateDateInput(event) {
+            const input = event.target;
+            const selectedDate = new Date(input.value);
+            const selectedYear = selectedDate.getFullYear();
+            const currentYear = new Date().getFullYear();
+
+            // Clear any previous custom message
+            input.setCustomValidity('');
+
+            // Only validate if there's a value
+            if (input.value) {
+                if (selectedYear < 2020 || selectedYear > currentYear + 2) {
+                    input.setCustomValidity(`Please select a date between 2020 and ${currentYear + 2}`);
+                } else {
+                    input.setCustomValidity(''); // Clear if valid
+                }
+            }
+
+            // Force re-validation
+            input.reportValidity();
+        },
+
+        handleDateInvalid(event) {
+            const input = event.target;
+            
+            // If the browser says it's invalid but we have a custom message, use ours
+            if (input.validity.customError && input.validationMessage) {
+                // Our custom message is already set, let it show
+                return;
+            }
+            
+            // Otherwise, set a better default message
+            if (input.validity.valueMissing) {
+                input.setCustomValidity('Please select an event date');
+            } else {
+                input.setCustomValidity('Please select a valid date');
+            }
+        },
+
+        cancelCreate() {
+            this.resetEventForm();
+            window.location.hash = '/';
+        },
+
+        resetEventForm() {
+            this.newEvent = {
+                title: '',
+                description: '',
+                category: '',
+                date: '',
+                time: '',
+                venueName: '',
+                organizerName: '',
+                isFree: false,
+                minPrice: null,
+                maxPrice: null
+            };
+        }
 }  // methods object closes here
 }).mount('#app');
 </script>   

@@ -71,6 +71,17 @@ function parseEvents(html) {
         const venueName = $(element).find('.venue-name').text().trim();
         const organizerName = $(element).find('.organizer-name').text().trim();
 
+        //Pricing scrape
+        let pricing = { isFree: false };
+        const pricingText = $(element).find('.pricing').text().trim();
+        if (pricingText) {
+            try {
+                pricing = JSON.parse(pricingText);
+            } catch (error) {
+                console.warn(`Failed to parse pricing JSON for event: ${title}`);
+            }
+        }
+
         //Convert date string to an ISO date for Mongoose's date type with validation
         let dateTime = {};
         if (dateString) {
@@ -91,6 +102,7 @@ function parseEvents(html) {
             description: description,
             category: category,
             dateTime: dateTime,
+            pricing: pricing,
             //These are temporary fields used only for the normalization API call
             venueName: venueName,
             organizerName: organizerName,
@@ -163,6 +175,7 @@ async function saveEvent(event) {
                 venueName: event.venueName, //Denormalized name for quick display/UI
             },
             organizer: event.organizerId, //The Mongoose ObjectId reference
+            pricing: event.pricing
             //Pricing, address etc., would be added here if scraped
         };
 
@@ -183,7 +196,9 @@ async function runScraper() {
 
     //URL to scrape (Can be local for testing)
     const path = require ('path');
-    const targetUrl = "//'file://' + path.resolve(__dirname, 'test-events.html')";
+    const targetUrl = "file://" + path.resolve(__dirname, 'test-events.html');
+    console.log('Full file path:', path.resolve(__dirname, 'test-events.html'));
+    console.log('Target URL:', targetUrl);
     //Or use a real website like const targetURL = 'https://example.com/events'
 
     //Scrape events
