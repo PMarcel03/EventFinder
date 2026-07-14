@@ -148,6 +148,7 @@ Naming these explicitly, rather than hiding them, because acknowledging known ga
 - **No write-endpoint authentication.** `POST`/`PUT`/`DELETE` on `/api/events`, `/api/venues`, `/api/organizers` currently accept unauthenticated requests. TODO: add auth middleware (JWT or API key) before any public deployment.
 - **Organizer name is not denormalized onto the Event document**, unlike `venueName`. As a result, organizer name is excluded from the `/api/events` search filter (`$or` query) — events cannot currently be searched by organizer without an additional lookup/populate step. This is an inconsistency in the schema design, not an intentional constraint.
 - **No retry/circuit-breaker logic in the scraper's normalization calls.** `normalizeVenue()`/`normalizeOrganizer()` handle _per-event_ failures (e.g. a malformed name) gracefully, but if the `/normalize` endpoint itself went down mid-run, the scraper would silently skip every remaining event with no alerting or retry — it defends against bad input, not downstream service outages.
+- **Server startup doesn't .env values** On boot server startup does not validate .env values a malformed value (e.g. non-numeric port) fails silently
 - **No automated tests currently exist.** <!-- your testing strategy plan goes here once you get to that block of the curriculum -->
 
 ---

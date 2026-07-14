@@ -1,0 +1,4 @@
+#MongoDB Atlas/local connection string 
+MONGODB_URI: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+#Port Number
+PORT: 3000
